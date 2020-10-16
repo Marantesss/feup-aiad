@@ -1,6 +1,13 @@
 # Compiled class file
 *.class
 
+# output files
+out/*
+target/*
+
+# random txt files
+*.txt
+
 # Log file
 *.log
 
