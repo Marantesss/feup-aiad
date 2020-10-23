@@ -2,10 +2,10 @@ package Tasks;
 
 public class Task {
     private int duration;
-    private int priority;
-    private TaskType type;
+    private final TaskPriority priority;
+    private final TaskType type;
 
-    public Task(int duration, int priority, TaskType type) {
+    public Task(int duration, TaskPriority priority, TaskType type) {
         this.duration = duration;
         this.priority = priority;
         this.type = type;
@@ -15,7 +15,7 @@ public class Task {
         return duration;
     }
 
-    public int getPriority() {
+    public TaskPriority getPriority() {
         return priority;
     }
 
