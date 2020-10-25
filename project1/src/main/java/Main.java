@@ -1,4 +1,3 @@
-import io.ConfigReader;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -8,6 +7,7 @@ import jade.wrapper.StaleProxyException;
 
 public class Main {
     public static void main(String[] args) throws StaleProxyException {
+
         Runtime rt = Runtime.instance();
         Profile profile = new ProfileImpl();
         profile.setParameter(Profile.GUI, "true");
