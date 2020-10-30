@@ -40,7 +40,7 @@ public class RandomTaskGenerator {
         Random random = new Random();
 
         int startingTime = randomInRange(this.minStartingInstant,this.maxStaringTime);
-        int duration = random.nextInt(this.maxTaskDuration + 1);
+        int duration = random.nextInt(this.maxTaskDuration) + 1 ;
 
         return new Task(startingTime,duration,priority,type);
     }
