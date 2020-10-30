@@ -1,9 +1,13 @@
+import Tasks.RandomTaskGenerator;
+import Tasks.Task;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws StaleProxyException {
@@ -14,6 +18,7 @@ public class Main {
 
         ContainerController cc = rt.createMainContainer(profile);
 
+        /*
         AgentController dev1 = cc.createNewAgent("developer1", "Agents.DeveloperAgent", null);
         AgentController dev2 = cc.createNewAgent("developer2", "Agents.DeveloperAgent", null);
         AgentController sm = cc.createNewAgent("ScrumMaster", "Agents.ScrumMasterAgent", null);
@@ -21,5 +26,14 @@ public class Main {
         dev1.start();
         dev2.start();
         sm.start();
+         */
+
+        //Example Test task generation
+        /*
+        RandomTaskGenerator  generator = new RandomTaskGenerator(10,0,20);
+        ArrayList<Task> tasks = generator.generateTaskList(200);
+
+        tasks.forEach(System.out::println);
+         */
     }
 }

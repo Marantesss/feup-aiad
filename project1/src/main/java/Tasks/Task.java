@@ -7,11 +7,13 @@ public class Task implements Serializable {
 
     private final int id;
     private int duration;
+    private final int startingInstant;
     private final TaskPriority priority;
     private final TaskType type;
 
-    public Task(int duration, TaskPriority priority, TaskType type) {
+    public Task(int startingInstant,int duration, TaskPriority priority, TaskType type) {
         this.id = ++count;
+        this.startingInstant = startingInstant;
         this.duration = duration;
         this.priority = priority;
         this.type = type;
@@ -29,10 +31,12 @@ public class Task implements Serializable {
         return type;
     }
 
+    /* TODO: commented for now, but will be removed later
     public void tick() {
         if (this.duration > 0)
             this.duration--;
     }
+     */
 
     public int getId() {
         return id;
@@ -42,9 +46,14 @@ public class Task implements Serializable {
     public String toString() {
         return "Task{" +
                 "id=" + id +
+                ", startingInstant=" + startingInstant +
                 ", duration=" + duration +
                 ", priority=" + priority +
                 ", type=" + type +
                 '}';
+    }
+
+    public int getStartingInstant() {
+        return startingInstant;
     }
 }

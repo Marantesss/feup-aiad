@@ -43,8 +43,8 @@ public class ConfigReader {
         // create tasks
         this.tasks = new ArrayList<>();
         for (var jsonTask : jsonTasks) {
-            Double duration = (Double) jsonTask.get("duration");
-            this.tasks.add(new Task(
+            Double duration = (double) jsonTask.get("duration");
+            this.tasks.add(new Task(0, //TODO: parse staring instant
                 duration.intValue(),
                 TaskPriority.valueOf((String) jsonTask.get("priority")),
                 TaskType.valueOf((String) jsonTask.get("type"))
