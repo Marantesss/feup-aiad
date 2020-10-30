@@ -1,0 +1,61 @@
+package io;
+
+import Agents.DeveloperAgent;
+import Tasks.Task;
+import Tasks.TaskPriority;
+import Tasks.TaskType;
+import com.google.gson.Gson;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class ConfigReader {
+
+    private final List<DeveloperAgent> developers;
+
+    private final List<Task> tasks;
+
+    public ConfigReader() throws IOException {
+        // create GSON instance
+        Gson gson = new Gson();
+        // read file
+        Reader reader = new FileReader("project1/src/main/resources/config.test.json");
+        // read file content as Map
+        var json = gson.fromJson(reader, Map.class);
+        // parse developers and tasks as list of map<string, string>
+        // gson already reads with correct class formats
+        List<Map<?, ?>> jsonDevelopers = (ArrayList) json.get("developers");
+        List<Map<?, ?>> jsonTasks = (ArrayList) json.get("tasks");
+
+        // create developers
+        this.developers = new ArrayList<>();
+        for (var jsonDev : jsonDevelopers) {
+            this.developers.add(new DeveloperAgent(TaskType.valueOf((String) jsonDev.get("aoe"))));
+        }
+        // create tasks
+        this.tasks = new ArrayList<>();
+        for (var jsonTask : jsonTasks) {
+            Double duration = (double) jsonTask.get("duration");
+            this.tasks.add(new Task(
+                duration.intValue(),
+                TaskPriority.valueOf((String) jsonTask.get("priority")),
+                TaskType.valueOf((String) jsonTask.get("type"))
+            ));
+        }
+        // close reader
+        reader.close();
+    }
+
+    public List<DeveloperAgent> getDevelopers() {
+        return developers;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+}

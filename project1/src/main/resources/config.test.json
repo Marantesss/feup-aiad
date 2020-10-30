@@ -1,0 +1,54 @@
+{
+  "developers": [
+    {
+      "aoe": "TESTING"
+    },
+    {
+      "aoe": "DEVOPS"
+    },
+    {
+      "aoe": "BACKEND"
+    },
+    {
+      "aoe": "DATABASE"
+    },
+    {
+      "aoe": "FRONTEND"
+    },
+    {
+      "aoe": "API"
+    }
+  ],
+  "tasks": [
+    {
+      "duration": 6,
+      "priority": "HIGH",
+      "type": "TESTING"
+    },
+    {
+      "duration": 4,
+      "priority": "MEDIUM",
+      "type": "DEVOPS"
+    },
+    {
+      "duration": 2,
+      "priority": "LOW",
+      "type": "BACKEND"
+    },
+    {
+      "duration": 1,
+      "priority": "LOW",
+      "type": "DATABASE"
+    },
+    {
+      "duration": 5,
+      "priority": "MEDIUM",
+      "type": "FRONTEND"
+    },
+    {
+      "duration": 6,
+      "priority": "HIGH",
+      "type": "API"
+    }
+  ]
+}
