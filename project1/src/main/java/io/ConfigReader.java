@@ -1,9 +1,9 @@
 package io;
 
-import Agents.DeveloperAgent;
-import Tasks.Task;
-import Tasks.TaskPriority;
-import Tasks.TaskType;
+import agents.DeveloperAgent;
+import tasks.Task;
+import tasks.TaskPriority;
+import tasks.TaskType;
 import com.google.gson.Gson;
 
 import java.io.FileReader;
