@@ -1,4 +1,4 @@
-package Tasks;
+package tasks;
 
 public class Task {
     private static int count = 0;

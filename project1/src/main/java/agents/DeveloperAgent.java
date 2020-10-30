@@ -1,7 +1,7 @@
-package Agents;
+package agents;
 
-import Tasks.Task;
-import Tasks.TaskType;
+import tasks.Task;
+import tasks.TaskType;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
