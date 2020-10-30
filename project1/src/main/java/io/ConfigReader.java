@@ -6,7 +6,6 @@ import Tasks.TaskPriority;
 import Tasks.TaskType;
 import com.google.gson.Gson;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -16,15 +15,18 @@ import java.util.Map;
 
 public class ConfigReader {
 
+    private final String configFilePath;
+
     private final List<DeveloperAgent> developers;
 
     private final List<Task> tasks;
 
-    public ConfigReader() throws IOException {
+    public ConfigReader(String configFilePath) throws IOException {
+        this.configFilePath = configFilePath;
         // create GSON instance
         Gson gson = new Gson();
         // read file
-        Reader reader = new FileReader("project1/src/main/resources/config.test.json");
+        Reader reader = new FileReader(this.configFilePath);
         // read file content as Map
         var json = gson.fromJson(reader, Map.class);
         // parse developers and tasks as list of map<string, string>
@@ -37,10 +39,11 @@ public class ConfigReader {
         for (var jsonDev : jsonDevelopers) {
             this.developers.add(new DeveloperAgent(TaskType.valueOf((String) jsonDev.get("aoe"))));
         }
+
         // create tasks
         this.tasks = new ArrayList<>();
         for (var jsonTask : jsonTasks) {
-            Double duration = (double) jsonTask.get("duration");
+            Double duration = (Double) jsonTask.get("duration");
             this.tasks.add(new Task(
                 duration.intValue(),
                 TaskPriority.valueOf((String) jsonTask.get("priority")),
@@ -57,5 +60,9 @@ public class ConfigReader {
 
     public List<Task> getTasks() {
         return tasks;
+    }
+
+    public String getConfigFilePath() {
+        return configFilePath;
     }
 }
