@@ -6,7 +6,6 @@ import Tasks.TaskPriority;
 import Tasks.TaskType;
 import com.google.gson.Gson;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -41,7 +40,7 @@ public class ConfigReader {
         this.tasks = new ArrayList<>();
         for (var jsonTask : jsonTasks) {
             Double duration = (double) jsonTask.get("duration");
-            this.tasks.add(new Task(
+            this.tasks.add(new Task(0, //TODO: parse staring instant
                 duration.intValue(),
                 TaskPriority.valueOf((String) jsonTask.get("priority")),
                 TaskType.valueOf((String) jsonTask.get("type"))
