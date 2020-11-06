@@ -1,5 +1,9 @@
 package agents.strategies;
 
+import communication.Proposal;
+
+import java.util.List;
+
 /**
  * Given a task to complete and a set of developers, the scrum master
  * will ask all developers when will this task be completed if it
@@ -17,5 +21,9 @@ package agents.strategies;
  * use a given strategy to choose which developer will get
  * the task.
  */
-public interface Strategy {
+public interface ChooseDeveloperStrategy {
+
+    default Proposal execute(List<Proposal> proposals) {
+        return proposals.get(0);
+    }
 }
