@@ -1,6 +1,6 @@
 package agents.strategies;
 
-import communication.Proposal;
+import proposals.Proposal;
 
 import java.util.List;
 
