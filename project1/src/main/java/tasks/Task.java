@@ -17,27 +17,6 @@ public class Task implements Serializable {
         this.type = type;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public TaskPriority getPriority() {
-        return priority;
-    }
-
-    public TaskType getType() {
-        return type;
-    }
-
-    public void tick() {
-        if (this.duration > 0)
-            this.duration--;
-    }
-
-    public int getId() {
-        return id;
-    }
-
     @Override
     public String toString() {
         return "Task{" +

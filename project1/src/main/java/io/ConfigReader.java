@@ -37,7 +37,7 @@ public class ConfigReader {
         // create developers
         this.developers = new ArrayList<>();
         for (var jsonDev : jsonDevelopers) {
-            this.developers.add(new DeveloperAgent(TaskType.valueOf((String) jsonDev.get("aoe"))));
+            this.developers.add(new DeveloperAgent());
         }
 
         // create tasks

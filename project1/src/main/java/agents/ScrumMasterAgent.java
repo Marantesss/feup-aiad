@@ -1,9 +1,14 @@
 package agents;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
+import tasks.Task;
+import tasks.TaskPriority;
+import tasks.TaskType;
 
+import java.io.IOException;
 import java.util.Vector;
 
 public class ScrumMasterAgent extends Agent {
@@ -28,10 +33,16 @@ public class ScrumMasterAgent extends Agent {
             Vector v = new Vector();
 
             // Add all the developers
-            // cfp.addReceiver(new AID("a1", false));
+            cfp.addReceiver(new AID("developer1", false));
+            cfp.addReceiver(new AID("developer2", false));
 
             // Send the Task object in the content
-            // cfp.setContentObject(task);
+            Task task = new Task(5, TaskPriority.HIGH, TaskType.API);
+            try {
+                cfp.setContentObject(task);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             v.add(cfp);
 
@@ -40,16 +51,29 @@ public class ScrumMasterAgent extends Agent {
 
         @Override
         protected void handleAllResponses(Vector responses, Vector acceptances) {
-            System.out.println("got " + responses.size() + " responses!");
+            ACLMessage earliestDev = (ACLMessage) responses.get(0);
+            responses.remove(0);
 
-            // Go through all the responses and check their end time
-            // Choose the earliest
-            // In case of a draw choose at random
-            for (Object respons : responses) {
-                ACLMessage msg = ((ACLMessage) respons).createReply();
-                msg.setPerformative(ACLMessage.ACCEPT_PROPOSAL); // OR NOT!
-                acceptances.add(msg);
+            for (Object res : responses) {
+                ACLMessage response = (ACLMessage) res;
+                int timestamp = Integer.parseInt(response.getContent());
+
+                if(timestamp < Integer.parseInt(earliestDev.getContent())) {
+                    ACLMessage msg = earliestDev.createReply();
+                    msg.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                    acceptances.add(msg);
+
+                    earliestDev = response;
+                } else {
+                    ACLMessage msg = response.createReply();
+                    msg.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                    acceptances.add(msg);
+                }
             }
+
+            ACLMessage msg = earliestDev.createReply();
+            msg.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+            acceptances.add(msg);
         }
 
         @Override

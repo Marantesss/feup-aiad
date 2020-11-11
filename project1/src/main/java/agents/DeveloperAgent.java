@@ -1,11 +1,10 @@
 package agents;
 
+import jade.lang.acl.UnreadableException;
 import tasks.Task;
 import tasks.TaskType;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
-import jade.domain.FIPAAgentManagement.NotUnderstoodException;
-import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
@@ -13,39 +12,22 @@ import jade.proto.ContractNetResponder;
 public class DeveloperAgent extends Agent {
     private static int count = 0;
 
-    private final int id;
+    private int id;
     private Task task;
-    private final TaskType aoe;
+    private TaskType aoe;
 
-    public DeveloperAgent(TaskType aoe) {
-        this.id = ++count;
-        this.aoe = aoe;
-    }
-
-    @Override
     protected void setup() {
+        this.id = ++count;
+
+        Object[] args = this.getArguments();
+        this.aoe = (TaskType)args[0];
+
         addBehaviour(new FIPAContractNetResp(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
     }
 
     @Override
     protected void takeDown() {
         super.takeDown();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Task getTask() {
-        return task;
-    }
-
-    public void setTask(Task task) {
-        this.task = task;
-    }
-
-    public TaskType getAoe() {
-        return aoe;
     }
 
     @Override
@@ -57,18 +39,24 @@ public class DeveloperAgent extends Agent {
                 '}';
     }
 
-    static class FIPAContractNetResp extends ContractNetResponder {
+    class FIPAContractNetResp extends ContractNetResponder {
         FIPAContractNetResp(Agent a, MessageTemplate mt) {
             super(a, mt);
         }
 
         @Override
-        protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
+        protected ACLMessage handleCfp(ACLMessage cfp) {
             ACLMessage reply = cfp.createReply();
             reply.setPerformative(ACLMessage.PROPOSE);
 
-            // Attach the time it will end the proposed task
-            // reply.setContentObject();
+            try {
+                Task task = (Task) cfp.getContentObject();
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
+
+            // Responds with the timestamp when it could complete the task
+            reply.setContent(String.valueOf(id));       // Now sending ids for debugging
 
             return reply;
         }
