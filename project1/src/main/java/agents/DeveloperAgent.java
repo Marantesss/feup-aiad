@@ -59,11 +59,19 @@ public class DeveloperAgent extends Agent {
         return Math.max(earlyInstant, task.getStartingInstant());
     }
 
-    public void addTask(Task task) {
+
+    /**
+     * Adds a new task to the be done by this developer
+     * @param task The task to be added
+     * @return The instant the task is expected to finish
+     */
+    private int addTask(Task task) {
         //Get instant the task can be started
         int instant = allocateTask(task);
 
         tasks.put(task,instant);
+
+        return instant + task.getDuration();
     }
 
     class FIPAContractNetResp extends ContractNetResponder {
@@ -81,17 +89,18 @@ public class DeveloperAgent extends Agent {
             try {
                 latestReceivedTask = (Task) cfp.getContentObject();
             } catch (UnreadableException e) {
-                e.printStackTrace();
+                e.printStackTrace(); //TODO: reply error on exception
             }
 
             // if TaskType and aoe match, cut duration in half, rounding up
             if (latestReceivedTask.getType() == aoe)
-                latestReceivedTask.setDuration((int) Math.ceil(latestReceivedTask.getDuration()/2));
+                latestReceivedTask.setDuration((int) Math.ceil(latestReceivedTask.getDuration()/2.0));
 
+            //Get the task allocation
+            int minStartingInstant = allocateTask(latestReceivedTask);
 
             // Responds with the timestamp when it could complete the task
-            Proposal proposal = new Proposal(id);       // TODO: Change this to when the task will be finished by the developer
-
+            Proposal proposal = new Proposal(minStartingInstant);
             try {
                 reply.setContentObject(proposal);
             } catch (IOException e) {
