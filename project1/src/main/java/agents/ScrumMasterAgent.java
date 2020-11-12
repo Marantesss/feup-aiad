@@ -1,5 +1,8 @@
 package agents;
 
+import agents.strategies.ChooseDeveloperLowestTimeStrategy;
+import agents.strategies.ChooseDeveloperRandomStrategy;
+import agents.strategies.ChooseDeveloperStrategy;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
@@ -8,8 +11,35 @@ import java.util.Vector;
 
 public class ScrumMasterAgent extends Agent {
 
+    private ChooseDeveloperStrategy strategy;
+
+    public ChooseDeveloperStrategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(ChooseDeveloperStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void pickStrategy(String strategyName) {
+        switch (strategyName.toLowerCase()) {
+            case "random":
+                this.setStrategy(new ChooseDeveloperRandomStrategy());
+                break;
+            case "lowesttime":
+                this.setStrategy(new ChooseDeveloperLowestTimeStrategy());
+                break;
+            default:
+                break;
+        }
+    }
+
     @Override
     protected void setup() {
+        Object[] args = this.getArguments();
+        if (args.length != 0) {
+            this.pickStrategy(args[0].toString());
+        }
         addBehaviour(new FIPAContractNetInit(this, new ACLMessage(ACLMessage.CFP)));
     }
 
