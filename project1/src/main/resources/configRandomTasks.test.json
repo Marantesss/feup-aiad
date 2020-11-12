@@ -1,0 +1,23 @@
+{
+  "strategy": "LOWESTTIME",
+  "developers": [
+    {
+      "aoe": "TESTING"
+    },
+    {
+      "aoe": "DEVOPS"
+    },
+    {
+      "aoe": "BACKEND"
+    },
+    {
+      "aoe": "DATABASE"
+    },
+    {
+      "aoe": "FRONTEND"
+    },
+    {
+      "aoe": "API"
+    }
+  ]
+}

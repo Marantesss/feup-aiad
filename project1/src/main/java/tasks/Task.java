@@ -1,4 +1,4 @@
-package Tasks;
+package tasks;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ public class Task implements Serializable {
     private final TaskPriority priority;
     private final TaskType type;
 
-    public Task(int startingInstant,int duration, TaskPriority priority, TaskType type) {
+    public Task(int startingInstant, int duration, TaskPriority priority, TaskType type) {
         this.id = ++count;
         this.startingInstant = startingInstant;
         this.duration = duration;
@@ -19,28 +19,31 @@ public class Task implements Serializable {
         this.type = type;
     }
 
+    // Utilizado no scrum master temp
+    public Task(int duration, TaskPriority priority, TaskType type) {
+        this.id = ++count;
+        this.duration = duration;
+        this.priority = priority;
+        this.type = type;
+        this.startingInstant = 0;
+    }
+
     public int getDuration() {
         return duration;
     }
 
-    public TaskPriority getPriority() {
-        return priority;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public TaskType getType() {
         return type;
     }
 
-    /* TODO: commented for now, but will be removed later
-    public void tick() {
-        if (this.duration > 0)
-            this.duration--;
+    public int getStartingInstant() {
+        return startingInstant;
     }
-     */
 
-    public int getId() {
-        return id;
-    }
 
     @Override
     public String toString() {
@@ -51,9 +54,5 @@ public class Task implements Serializable {
                 ", priority=" + priority +
                 ", type=" + type +
                 '}';
-    }
-
-    public int getStartingInstant() {
-        return startingInstant;
     }
 }
