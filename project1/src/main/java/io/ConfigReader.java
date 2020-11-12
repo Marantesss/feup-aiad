@@ -1,6 +1,7 @@
 package io;
 
 import agents.DeveloperAgent;
+import tasks.RandomTaskGenerator;
 import tasks.Task;
 import tasks.TaskPriority;
 import tasks.TaskType;
@@ -45,14 +46,20 @@ public class ConfigReader {
         }
 
         // create tasks
-        this.tasks = new ArrayList<>();
-        for (var jsonTask : jsonTasks) {
-            Double duration = (double) jsonTask.get("duration");
-            this.tasks.add(new Task(0, //TODO: parse staring instant
-                duration.intValue(),
-                TaskPriority.valueOf((String) jsonTask.get("priority")),
-                TaskType.valueOf((String) jsonTask.get("type"))
-            ));
+        // tasks might not be present, and if such then they are random
+        if (jsonTasks == null) {
+            var taskGenerator = new RandomTaskGenerator(10, 0, 30);
+            this.tasks = taskGenerator.generateTaskList(20);
+        } else {
+            this.tasks = new ArrayList<>();
+            for (var jsonTask : jsonTasks) {
+                Double duration = (double) jsonTask.get("duration");
+                this.tasks.add(new Task(0, //TODO: parse staring instant
+                        duration.intValue(),
+                        TaskPriority.valueOf((String) jsonTask.get("priority")),
+                        TaskType.valueOf((String) jsonTask.get("type"))
+                ));
+            }
         }
         // close reader
         reader.close();

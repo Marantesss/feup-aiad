@@ -1,8 +1,11 @@
+import io.ConfigReader;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws StaleProxyException {
@@ -11,7 +14,11 @@ public class Main {
         Profile profile = new ProfileImpl();
         profile.setParameter(Profile.GUI, "true");
 
-        //ConfigReader reader = new ConfigReader("project1/src/main/resources/config.test.json");
+        try {
+            ConfigReader reader = new ConfigReader("project1/src/main/resources/config.test.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         ContainerController cc = rt.createMainContainer(profile);
 
