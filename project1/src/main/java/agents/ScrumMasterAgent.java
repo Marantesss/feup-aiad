@@ -9,47 +9,37 @@ import tasks.TaskPriority;
 import tasks.TaskType;
 
 import java.io.IOException;
-import agents.strategies.ChooseDeveloperLowestTimeStrategy;
-import agents.strategies.ChooseDeveloperRandomStrategy;
 import agents.strategies.ChooseDeveloperStrategy;
-import jade.core.Agent;
-import jade.lang.acl.ACLMessage;
-import jade.proto.ContractNetInitiator;
 
+import java.util.List;
 import java.util.Vector;
 
 public class ScrumMasterAgent extends Agent {
 
     private ChooseDeveloperStrategy strategy;
 
-    public ChooseDeveloperStrategy getStrategy() {
-        return strategy;
-    }
+    private List<Task> bufferedTasks;
 
-    public void setStrategy(ChooseDeveloperStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public void pickStrategy(String strategyName) {
-        switch (strategyName.toLowerCase()) {
-            case "random":
-                this.setStrategy(new ChooseDeveloperRandomStrategy());
-                break;
-            case "lowesttime":
-                this.setStrategy(new ChooseDeveloperLowestTimeStrategy());
-                break;
-            default:
-                break;
-        }
-    }
+    private int developerCount;
 
     @Override
     protected void setup() {
+        // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
         Object[] args = this.getArguments();
-        if (args.length != 0) {
-            this.pickStrategy(args[0].toString());
-        }
+        this.strategy = (ChooseDeveloperStrategy) args[0];
+        this.bufferedTasks = (List<Task>) args[1];
+        this.developerCount = (int) args[2];
+        System.out.println(this);
         addBehaviour(new FIPAContractNetInit(this, new ACLMessage(ACLMessage.CFP)));
+    }
+
+    @Override
+    public String toString() {
+        return "ScrumMasterAgent{" +
+                "strategy=" + strategy +
+                ", bufferedTasks=" + bufferedTasks +
+                ", developerCount=" + developerCount +
+                '}';
     }
 
     @Override

@@ -15,21 +15,28 @@ public class Main {
         Profile profile = new ProfileImpl();
         profile.setParameter(Profile.GUI, "false");
 
+        ConfigReader reader = null;
         try {
-            ConfigReader reader = new ConfigReader("project1/src/main/resources/config.test.json");
+            reader = new ConfigReader("project1/src/main/resources/config.test.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         ContainerController cc = rt.createMainContainer(profile);
 
-        AgentController sm = cc.createNewAgent("ScrumMaster", "agents.ScrumMasterAgent", null);
-        AgentController dev1 = cc.createNewAgent("developer1", "agents.DeveloperAgent", new TaskType[]{TaskType.API});
-        AgentController dev2 = cc.createNewAgent("developer2", "agents.DeveloperAgent", new TaskType[]{TaskType.TESTING});
-
-        dev1.start();
-        dev2.start();
+        // create developer agents
+        assert reader != null;
+        int developerCount = 0;
+        for (var aoe : reader.getDevelopersExpertise()) {
+            Object[] devArgs = { ++developerCount, aoe };
+            AgentController dev = cc.createNewAgent("developer" + developerCount, "agents.DeveloperAgent", devArgs);
+            dev.start();
+        }
+        // wait for devs to be ready
         Thread.sleep(500);
+        // create scrum master agent
+        Object[] scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount };
+        AgentController sm = cc.createNewAgent("ScrumMaster", "agents.ScrumMasterAgent", scrumMasterArgs);
         sm.start();
 
         //Example Test task generation

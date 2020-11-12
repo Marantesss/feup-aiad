@@ -10,18 +10,16 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 
 public class DeveloperAgent extends Agent {
-    private static int count = 0;
-
     private int id;
     private Task task;
     private TaskType aoe;
 
     protected void setup() {
-        this.id = ++count;
-
+        // devArgs = { ++devCount, aoe };
         Object[] args = this.getArguments();
-        this.aoe = (TaskType)args[0];
-
+        this.id = (int) args[0];
+        this.aoe = (TaskType)args[1];
+        System.out.println(this);
         addBehaviour(new FIPAContractNetResp(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
     }
 
