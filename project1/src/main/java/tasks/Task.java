@@ -28,6 +28,19 @@ public class Task implements Serializable {
         this.startingInstant = 0;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public TaskType getType() {
+        return type;
+    }
+
+
     @Override
     public String toString() {
         return "Task{" +
@@ -37,9 +50,5 @@ public class Task implements Serializable {
                 ", priority=" + priority +
                 ", type=" + type +
                 '}';
-    }
-
-    public int getStartingInstant() {
-        return startingInstant;
     }
 }

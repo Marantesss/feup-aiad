@@ -1,6 +1,7 @@
 package agents;
 
 import jade.lang.acl.UnreadableException;
+import proposals.Proposal;
 import tasks.Task;
 import tasks.TaskType;
 import jade.core.Agent;
@@ -8,6 +9,8 @@ import jade.domain.FIPAAgentManagement.FailureException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
+
+import java.io.IOException;
 
 public class DeveloperAgent extends Agent {
     private int id;
@@ -18,8 +21,8 @@ public class DeveloperAgent extends Agent {
         // devArgs = { ++devCount, aoe };
         Object[] args = this.getArguments();
         this.id = (int) args[0];
-        this.aoe = (TaskType)args[1];
-        System.out.println(this);
+        this.aoe = (TaskType) args[1];
+
         addBehaviour(new FIPAContractNetResp(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
     }
 
@@ -53,8 +56,19 @@ public class DeveloperAgent extends Agent {
                 e.printStackTrace();
             }
 
+            // if TaskType and aoe match, cut duration in half, rounding up
+            if (task.getType() == aoe)
+                task.setDuration((int) Math.ceil(task.getDuration()/2));
+
+
             // Responds with the timestamp when it could complete the task
-            reply.setContent(String.valueOf(id));       // Now sending ids for debugging
+            Proposal proposal = new Proposal(id);       // TODO: Change this to when the task will be finished by the developer
+
+            try {
+                reply.setContentObject(proposal);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             return reply;
         }
@@ -64,6 +78,7 @@ public class DeveloperAgent extends Agent {
             System.out.println(myAgent.getLocalName() + " got a reject...");
         }
 
+        // TODO: Após receber um accept do SM adicionar a task à lista
         @Override
         protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
             System.out.println(myAgent.getLocalName() + " got an accept!");

@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
+import proposals.Proposal;
 import tasks.Task;
 import tasks.TaskPriority;
 import tasks.TaskType;
@@ -11,16 +12,14 @@ import tasks.TaskType;
 import java.io.IOException;
 import agents.strategies.ChooseDeveloperStrategy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 public class ScrumMasterAgent extends Agent {
-
     private ChooseDeveloperStrategy strategy;
-
     private List<Task> bufferedTasks;
-
-    private int developerCount;
+    private List<String> developerNames;
 
     @Override
     protected void setup() {
@@ -28,18 +27,9 @@ public class ScrumMasterAgent extends Agent {
         Object[] args = this.getArguments();
         this.strategy = (ChooseDeveloperStrategy) args[0];
         this.bufferedTasks = (List<Task>) args[1];
-        this.developerCount = (int) args[2];
-        System.out.println(this);
-        addBehaviour(new FIPAContractNetInit(this, new ACLMessage(ACLMessage.CFP)));
-    }
+        this.developerNames = generateDeveloperNames((int) args[2]);
 
-    @Override
-    public String toString() {
-        return "ScrumMasterAgent{" +
-                "strategy=" + strategy +
-                ", bufferedTasks=" + bufferedTasks +
-                ", developerCount=" + developerCount +
-                '}';
+        addBehaviour(new FIPAContractNetInit(this, new ACLMessage(ACLMessage.CFP)));
     }
 
     @Override
@@ -47,7 +37,26 @@ public class ScrumMasterAgent extends Agent {
         super.takeDown();
     }
 
-    static class FIPAContractNetInit extends ContractNetInitiator {
+    @Override
+    public String toString() {
+        return "ScrumMasterAgent{" +
+                "strategy=" + strategy +
+                ", bufferedTasks=" + bufferedTasks +
+                ", developerNames=" + developerNames +
+                '}';
+    }
+
+    private List<String> generateDeveloperNames(int developerCount) {
+        List<String> developerNames = new ArrayList<>();
+
+        for (int i = 1; i <= developerCount; i++) {
+            developerNames.add("developer"+i);
+        }
+
+        return developerNames;
+    }
+
+    class FIPAContractNetInit extends ContractNetInitiator {
         FIPAContractNetInit(Agent a, ACLMessage cfp) {
             super(a, cfp);
         }
@@ -56,11 +65,13 @@ public class ScrumMasterAgent extends Agent {
         protected Vector prepareCfps(ACLMessage cfp) {
             Vector v = new Vector();
 
-            // Add all the developers
-            cfp.addReceiver(new AID("developer1", false));
-            cfp.addReceiver(new AID("developer2", false));
+            for (String name : developerNames) {
+                cfp.addReceiver(new AID(name, false));
+            }
 
-            // Send the Task object in the content
+            // Ciclo while para enviar todas as tasks no buffer
+            // Verificar se é assim ou de outra forma
+
             Task task = new Task(5, TaskPriority.HIGH, TaskType.API);
             try {
                 cfp.setContentObject(task);
@@ -75,29 +86,25 @@ public class ScrumMasterAgent extends Agent {
 
         @Override
         protected void handleAllResponses(Vector responses, Vector acceptances) {
-            ACLMessage earliestDev = (ACLMessage) responses.get(0);
-            responses.remove(0);
+            List<Proposal> proposals = new ArrayList<>();
 
-            for (Object res : responses) {
-                ACLMessage response = (ACLMessage) res;
-                int timestamp = Integer.parseInt(response.getContent());
-
-                if(timestamp < Integer.parseInt(earliestDev.getContent())) {
-                    ACLMessage msg = earliestDev.createReply();
-                    msg.setPerformative(ACLMessage.REJECT_PROPOSAL);
-                    acceptances.add(msg);
-
-                    earliestDev = response;
-                } else {
-                    ACLMessage msg = response.createReply();
-                    msg.setPerformative(ACLMessage.REJECT_PROPOSAL);
-                    acceptances.add(msg);
-                }
+            for (Object response : responses) {
+                proposals.add((Proposal) response);
             }
 
-            ACLMessage msg = earliestDev.createReply();
-            msg.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-            acceptances.add(msg);
+            Proposal best = strategy.execute(proposals);
+
+            for (int i = 0; i < responses.size(); i++) {
+                ACLMessage response = (ACLMessage) responses.get(i);
+                ACLMessage reply = response.createReply();
+
+                if (i == responses.indexOf(best))
+                    reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                else
+                    reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+
+                acceptances.add(reply);
+            }
         }
 
         @Override
