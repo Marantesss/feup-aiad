@@ -1,45 +1,34 @@
 package agents;
 
-import agents.strategies.ChooseDeveloperLowestTimeStrategy;
-import agents.strategies.ChooseDeveloperRandomStrategy;
-import agents.strategies.ChooseDeveloperStrategy;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
+import proposals.Proposal;
+import tasks.Task;
+import tasks.TaskPriority;
+import tasks.TaskType;
 
+import java.io.IOException;
+import agents.strategies.ChooseDeveloperStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public class ScrumMasterAgent extends Agent {
-
     private ChooseDeveloperStrategy strategy;
-
-    public ChooseDeveloperStrategy getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(ChooseDeveloperStrategy strategy) {
-        this.strategy = strategy;
-    }
-
-    public void pickStrategy(String strategyName) {
-        switch (strategyName.toLowerCase()) {
-            case "random":
-                this.setStrategy(new ChooseDeveloperRandomStrategy());
-                break;
-            case "lowesttime":
-                this.setStrategy(new ChooseDeveloperLowestTimeStrategy());
-                break;
-            default:
-                break;
-        }
-    }
+    private List<Task> bufferedTasks;
+    private List<String> developerNames;
 
     @Override
     protected void setup() {
+        // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
         Object[] args = this.getArguments();
-        if (args.length != 0) {
-            this.pickStrategy(args[0].toString());
-        }
+        this.strategy = (ChooseDeveloperStrategy) args[0];
+        this.bufferedTasks = (List<Task>) args[1];
+        this.developerNames = generateDeveloperNames((int) args[2]);
+
         addBehaviour(new FIPAContractNetInit(this, new ACLMessage(ACLMessage.CFP)));
     }
 
@@ -48,7 +37,26 @@ public class ScrumMasterAgent extends Agent {
         super.takeDown();
     }
 
-    static class FIPAContractNetInit extends ContractNetInitiator {
+    @Override
+    public String toString() {
+        return "ScrumMasterAgent{" +
+                "strategy=" + strategy +
+                ", bufferedTasks=" + bufferedTasks +
+                ", developerNames=" + developerNames +
+                '}';
+    }
+
+    private List<String> generateDeveloperNames(int developerCount) {
+        List<String> developerNames = new ArrayList<>();
+
+        for (int i = 1; i <= developerCount; i++) {
+            developerNames.add("developer"+i);
+        }
+
+        return developerNames;
+    }
+
+    class FIPAContractNetInit extends ContractNetInitiator {
         FIPAContractNetInit(Agent a, ACLMessage cfp) {
             super(a, cfp);
         }
@@ -57,11 +65,19 @@ public class ScrumMasterAgent extends Agent {
         protected Vector prepareCfps(ACLMessage cfp) {
             Vector v = new Vector();
 
-            // Add all the developers
-            // cfp.addReceiver(new AID("a1", false));
+            for (String name : developerNames) {
+                cfp.addReceiver(new AID(name, false));
+            }
 
-            // Send the Task object in the content
-            // cfp.setContentObject(task);
+            // Ciclo while para enviar todas as tasks no buffer
+            // Verificar se é assim ou de outra forma
+
+            Task task = new Task(5, TaskPriority.HIGH, TaskType.API);
+            try {
+                cfp.setContentObject(task);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             v.add(cfp);
 
@@ -70,15 +86,24 @@ public class ScrumMasterAgent extends Agent {
 
         @Override
         protected void handleAllResponses(Vector responses, Vector acceptances) {
-            System.out.println("got " + responses.size() + " responses!");
+            List<Proposal> proposals = new ArrayList<>();
 
-            // Go through all the responses and check their end time
-            // Choose the earliest
-            // In case of a draw choose at random
-            for (Object respons : responses) {
-                ACLMessage msg = ((ACLMessage) respons).createReply();
-                msg.setPerformative(ACLMessage.ACCEPT_PROPOSAL); // OR NOT!
-                acceptances.add(msg);
+            for (Object response : responses) {
+                proposals.add((Proposal) response);
+            }
+
+            Proposal best = strategy.execute(proposals);
+
+            for (int i = 0; i < responses.size(); i++) {
+                ACLMessage response = (ACLMessage) responses.get(i);
+                ACLMessage reply = response.createReply();
+
+                if (i == responses.indexOf(best))
+                    reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                else
+                    reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+
+                acceptances.add(reply);
             }
         }
 

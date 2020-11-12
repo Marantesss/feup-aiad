@@ -1,6 +1,8 @@
 package io;
 
-import agents.DeveloperAgent;
+import agents.strategies.ChooseDeveloperLowestTimeStrategy;
+import agents.strategies.ChooseDeveloperRandomStrategy;
+import agents.strategies.ChooseDeveloperStrategy;
 import tasks.RandomTaskGenerator;
 import tasks.Task;
 import tasks.TaskPriority;
@@ -18,9 +20,9 @@ public class ConfigReader {
 
     private final String configFilePath;
 
-    private final String strategy;
+    private final ChooseDeveloperStrategy strategy;
 
-    private final List<DeveloperAgent> developers;
+    private final List<TaskType> developersExpertise;
 
     private final List<Task> tasks;
 
@@ -33,16 +35,16 @@ public class ConfigReader {
         // read file content as Map
         var json = gson.fromJson(reader, Map.class);
         // parse scrum master strategy
-        this.strategy = (String) json.get("strategy");
+        this.strategy = this.pickStrategy((String) json.get("strategy"));
         // parse developers and tasks as list of map<string, string>
         // gson already reads with correct class formats
         List<Map<?, ?>> jsonDevelopers = (ArrayList) json.get("developers");
         List<Map<?, ?>> jsonTasks = (ArrayList) json.get("tasks");
 
         // create developers
-        this.developers = new ArrayList<>();
+        this.developersExpertise = new ArrayList<>();
         for (var jsonDev : jsonDevelopers) {
-            this.developers.add(new DeveloperAgent(TaskType.valueOf((String) jsonDev.get("aoe"))));
+            this.developersExpertise.add(TaskType.valueOf((String) jsonDev.get("aoe")));
         }
 
         // create tasks
@@ -53,9 +55,11 @@ public class ConfigReader {
         } else {
             this.tasks = new ArrayList<>();
             for (var jsonTask : jsonTasks) {
-                Double duration = (double) jsonTask.get("duration");
-                this.tasks.add(new Task(0, //TODO: parse staring instant
-                        duration.intValue(),
+                int startingInstant = (int) Math.round((double) jsonTask.get("start"));
+                int duration = (int) Math.round((double) jsonTask.get("duration"));
+                this.tasks.add(new Task(
+                        startingInstant,
+                        duration,
                         TaskPriority.valueOf((String) jsonTask.get("priority")),
                         TaskType.valueOf((String) jsonTask.get("type"))
                 ));
@@ -65,8 +69,20 @@ public class ConfigReader {
         reader.close();
     }
 
-    public List<DeveloperAgent> getDevelopers() {
-        return developers;
+    private ChooseDeveloperStrategy pickStrategy(String strategyName) {
+        switch (strategyName.toLowerCase()) {
+            case "random":
+                return new ChooseDeveloperRandomStrategy();
+            case "lowesttime":
+                return new ChooseDeveloperLowestTimeStrategy();
+            default:
+                break;
+        }
+        return null;
+    }
+
+    public List<TaskType> getDevelopersExpertise() {
+        return developersExpertise;
     }
 
     public List<Task> getTasks() {
@@ -77,7 +93,7 @@ public class ConfigReader {
         return configFilePath;
     }
 
-    public String getStrategy() {
+    public ChooseDeveloperStrategy getStrategy() {
         return strategy;
     }
 }

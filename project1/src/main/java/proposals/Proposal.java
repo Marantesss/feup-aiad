@@ -1,18 +1,12 @@
 package proposals;
 
-public class Proposal {
+import java.io.Serializable;
 
-    final int id;
+public class Proposal implements Serializable {
+    private final int timeUntilCompleted;
 
-    final int timeUntilCompleted;
-
-    public Proposal(int id, int timeUntilCompleted) {
-        this.id = id;
+    public Proposal(int timeUntilCompleted) {
         this.timeUntilCompleted = timeUntilCompleted;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getTimeUntilCompleted() {
@@ -22,8 +16,7 @@ public class Proposal {
     @Override
     public String toString() {
         return "Proposal{" +
-                "id=" + id +
-                ", timeUntilCompleted=" + timeUntilCompleted +
+                "timeUntilCompleted=" + timeUntilCompleted +
                 '}';
     }
 }

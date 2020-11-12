@@ -23,31 +23,37 @@
   "tasks": [
     {
       "duration": 6,
+      "start": 0,
       "priority": "HIGH",
       "type": "TESTING"
     },
     {
       "duration": 4,
+      "start": 1,
       "priority": "MEDIUM",
       "type": "DEVOPS"
     },
     {
       "duration": 2,
+      "start": 3,
       "priority": "LOW",
       "type": "BACKEND"
     },
     {
       "duration": 1,
+      "start": 4,
       "priority": "LOW",
       "type": "DATABASE"
     },
     {
       "duration": 5,
+      "start": 7,
       "priority": "MEDIUM",
       "type": "FRONTEND"
     },
     {
       "duration": 6,
+      "start": 2,
       "priority": "HIGH",
       "type": "API"
     }
