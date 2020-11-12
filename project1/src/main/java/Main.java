@@ -16,13 +16,15 @@ public class Main {
         Profile profile = new ProfileImpl();
         profile.setParameter(Profile.GUI, "true");
 
+        //ConfigReader reader = new ConfigReader("project1/src/main/resources/config.test.json");
+
         ContainerController cc = rt.createMainContainer(profile);
 
         /*
         //AgentController dev1 = cc.createNewAgent("developer1", "agents.DeveloperAgent", null);
         //AgentController dev2 = cc.createNewAgent("developer2", "agents.DeveloperAgent", null);
 
-        String ar[] = {"cenas"};
+        String[] ar = {"cenas"};
         AgentController sm = cc.createNewAgent("ScrumMaster", "agents.ScrumMasterAgent", ar);
 
         //dev1.start();

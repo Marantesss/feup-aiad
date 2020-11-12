@@ -17,6 +17,8 @@ public class ConfigReader {
 
     private final String configFilePath;
 
+    private final String strategy;
+
     private final List<DeveloperAgent> developers;
 
     private final List<Task> tasks;
@@ -29,6 +31,8 @@ public class ConfigReader {
         Reader reader = new FileReader(this.configFilePath);
         // read file content as Map
         var json = gson.fromJson(reader, Map.class);
+        // parse scrum master strategy
+        this.strategy = (String) json.get("strategy");
         // parse developers and tasks as list of map<string, string>
         // gson already reads with correct class formats
         List<Map<?, ?>> jsonDevelopers = (ArrayList) json.get("developers");
@@ -64,5 +68,9 @@ public class ConfigReader {
 
     public String getConfigFilePath() {
         return configFilePath;
+    }
+
+    public String getStrategy() {
+        return strategy;
     }
 }

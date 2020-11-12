@@ -14,7 +14,7 @@ public class ChooseDeveloperLowestTimeStrategy implements ChooseDeveloperStrateg
     /**
      * This comparator will sort the proposals based on their time to complete
      */
-    private Comparator<Proposal> comparator = new ProposalTimeComparator();
+    private final Comparator<Proposal> comparator = new ProposalTimeComparator();
 
     @Override
     public Proposal execute(List<Proposal> proposals) {
