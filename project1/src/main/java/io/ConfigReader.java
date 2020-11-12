@@ -55,9 +55,9 @@ public class ConfigReader {
         } else {
             this.tasks = new ArrayList<>();
             for (var jsonTask : jsonTasks) {
-                Double duration = (double) jsonTask.get("duration"); // TODO: check this out (not working with simao)
+                int duration = (int) Math.round((double) jsonTask.get("duration"));
                 this.tasks.add(new Task(0, //TODO: parse staring instant
-                        duration.intValue(),
+                        duration,
                         TaskPriority.valueOf((String) jsonTask.get("priority")),
                         TaskType.valueOf((String) jsonTask.get("type"))
                 ));
