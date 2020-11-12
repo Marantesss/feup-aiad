@@ -44,6 +44,10 @@ public class Task implements Serializable {
         return startingInstant;
     }
 
+    public int getId() {
+        return this.id;
+    }
+
 
     @Override
     public String toString() {

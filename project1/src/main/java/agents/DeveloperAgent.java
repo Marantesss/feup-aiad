@@ -12,6 +12,7 @@ import jade.proto.ContractNetResponder;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DeveloperAgent extends Agent {
     private int id;
@@ -38,7 +39,7 @@ public class DeveloperAgent extends Agent {
     public String toString() {
         return "DeveloperAgent{" +
                 "id=" + id +
-                ", tasks=" + tasks + //TODO: print the hashmap and not the pointer
+                ", tasks=" + getTaskString() +
                 ", aoe=" + aoe +
                 '}';
     }
@@ -49,19 +50,23 @@ public class DeveloperAgent extends Agent {
      * @return The minimum instant this developer can start the task
      */
     private int allocateTask(Task task) {
-        if (latestTask == null) {
-            return 0;
-        }
+        int earlyInstant;
 
-        //Get the earliest theoretical instant the task can be finished
-        int earlyInstant = tasks.get(latestTask) + latestTask.getDuration();
+        if (latestTask == null) {
+            earlyInstant = 0;
+        }
+        else {
+            //Get the earliest theoretical instant the task can be finished
+            earlyInstant = tasks.get(latestTask) + latestTask.getDuration();
+        }
 
         return Math.max(earlyInstant, task.getStartingInstant());
     }
 
 
     /**
-     * Adds a new task to the be done by this developer
+     * Adds a new task to the be done by this developer so that the key
+     * of the map is the task and the value is the instant it is going to be started
      * @param task The task to be added
      * @return The instant the task is expected to finish
      */
@@ -71,7 +76,27 @@ public class DeveloperAgent extends Agent {
 
         tasks.put(task,instant);
 
+        this.latestTask = task; //Sets the latest accepted task
+
         return instant + task.getDuration();
+    }
+
+    /**
+     * Returns a string with all the relevant task information
+     * @return
+     */
+    private String getTaskString() {
+        StringBuilder buffer = new StringBuilder("{");
+
+        for (Map.Entry<Task,Integer> entry : tasks.entrySet()) {
+            Task task = entry.getKey();
+            buffer.append("Task").append(task.getId()).append(": start ->").append(entry.getValue()).append("; finish -> ")
+                    .append(entry.getValue() + task.getDuration()).append("|");
+        }
+
+        buffer.append("}");
+
+        return buffer.toString();
     }
 
     class FIPAContractNetResp extends ContractNetResponder {
@@ -93,14 +118,14 @@ public class DeveloperAgent extends Agent {
             }
 
             // if TaskType and aoe match, cut duration in half, rounding up
-            if (latestReceivedTask.getType() == aoe)
+            if (latestReceivedTask.getType().equals(aoe))
                 latestReceivedTask.setDuration((int) Math.ceil(latestReceivedTask.getDuration()/2.0));
 
             //Get the task allocation
             int minStartingInstant = allocateTask(latestReceivedTask);
 
             // Responds with the timestamp when it could complete the task
-            Proposal proposal = new Proposal(minStartingInstant);
+            Proposal proposal = new Proposal(minStartingInstant + latestReceivedTask.getDuration(), latestReceivedTask);
             try {
                 reply.setContentObject(proposal);
             } catch (IOException e) {
@@ -115,15 +140,23 @@ public class DeveloperAgent extends Agent {
             System.out.println(myAgent.getLocalName() + " got a reject...");
         }
 
-        // TODO: Após receber um accept do SM adicionar a task à lista
         @Override
         protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
             System.out.println(myAgent.getLocalName() + " got an accept!");
+
+            try {
+                Proposal proposal = (Proposal) accept.getContentObject();
+                addTask(proposal.getTask());
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
 
             ACLMessage result = accept.createReply();
             // Verify between all the informs
             result.setPerformative(ACLMessage.INFORM);
             result.setContent("this is the result");
+
+            System.out.println("Developer " + id + ": " + getTaskString());
 
             return result;
         }

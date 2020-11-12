@@ -106,10 +106,17 @@ public class ScrumMasterAgent extends Agent {
                 ACLMessage response = (ACLMessage) responses.get(i);
                 ACLMessage reply = response.createReply();
 
-                if (proposals.get(i).equals(best))
+                if (proposals.get(i).equals(best)) {
                     reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                }
                 else
                     reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+
+                try {
+                    reply.setContentObject(proposals.get(i));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 acceptances.add(reply);
             }
