@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import proposals.Proposal;
 import tasks.Task;
@@ -93,7 +94,14 @@ public class ScrumMasterAgent extends Agent {
             List<Proposal> proposals = new ArrayList<>();
 
             for (Object response : responses) {
-                proposals.add((Proposal) response);
+                ACLMessage msg = (ACLMessage) response;
+                Proposal prop = null;
+                try {
+                    prop = (Proposal) msg.getContentObject();
+                } catch (UnreadableException e) {
+                    e.printStackTrace();
+                }
+                proposals.add(prop);
             }
 
             Proposal best = strategy.execute(proposals);
@@ -102,10 +110,17 @@ public class ScrumMasterAgent extends Agent {
                 ACLMessage response = (ACLMessage) responses.get(i);
                 ACLMessage reply = response.createReply();
 
-                if (i == responses.indexOf(best))
+                if (proposals.get(i).equals(best)) {
                     reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                }
                 else
                     reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+
+                try {
+                    reply.setContentObject(proposals.get(i));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 acceptances.add(reply);
             }

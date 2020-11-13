@@ -16,7 +16,7 @@ public class Main {
 
         ConfigReader reader = null;
         try {
-            reader = new ConfigReader("project1/src/main/resources/config.test.json");
+            reader = new ConfigReader("src/main/resources/config.test.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
