@@ -15,17 +15,18 @@ public class OutputWriter {
 
     private final String outputFilePath;
 
-    private final List<DeveloperAgent> developers;
+    private List<DeveloperAgent> developers;
 
     private int totalProjectTime;
 
-    public OutputWriter(List<DeveloperAgent> developers, String outputFilePath) {
+    public OutputWriter(String outputFilePath) {
         this.outputFilePath = outputFilePath;
-        this.developers = developers;
-        this.calculateTotalProjectTime();
     }
 
     public void writeOutput() {
+        // calculate total project time
+        this.calculateTotalProjectTime();
+        // create GSON object and output data
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Map<String, Object> map = new HashMap<>();
         // add total project time

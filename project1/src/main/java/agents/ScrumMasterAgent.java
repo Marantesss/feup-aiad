@@ -1,5 +1,6 @@
 package agents;
 
+import io.OutputWriter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
@@ -23,6 +24,8 @@ public class ScrumMasterAgent extends Agent {
     private List<String> developerNames;
     private SequentialBehaviour behaviour;
 
+    private OutputWriter writer;
+
     @Override
     protected void setup() {
         // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
@@ -30,6 +33,8 @@ public class ScrumMasterAgent extends Agent {
         this.strategy = (ChooseDeveloperStrategy) args[0];
         this.bufferedTasks = (LinkedList<Task>) args[1];
         this.developerNames = generateDeveloperNames((int) args[2]);
+        this.writer = new OutputWriter("results.test.json");
+
         behaviour = new SequentialBehaviour();
 
         this.sendNextMessage();
