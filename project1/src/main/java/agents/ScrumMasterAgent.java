@@ -128,8 +128,6 @@ public class ScrumMasterAgent extends Agent {
 
         @Override
         protected void handleAllResultNotifications(Vector resultNotifications) {
-            System.out.println("got " + resultNotifications.size() + " result notifs!");
-
             if (!bufferedTasks.isEmpty()) {
                 sendNextMessage();
             }

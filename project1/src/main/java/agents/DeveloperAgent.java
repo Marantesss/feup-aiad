@@ -5,7 +5,6 @@ import proposals.Proposal;
 import tasks.Task;
 import tasks.TaskType;
 import jade.core.Agent;
-import jade.domain.FIPAAgentManagement.FailureException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
@@ -38,9 +37,7 @@ public class DeveloperAgent extends Agent {
     @Override
     public String toString() {
         return "DeveloperAgent{" +
-                "id=" + id +
-                ", tasks=" + getTaskString() +
-                ", aoe=" + aoe +
+                "tasks=" + tasks.keySet() +
                 '}';
     }
 
@@ -63,22 +60,18 @@ public class DeveloperAgent extends Agent {
         return Math.max(earlyInstant, task.getStartingInstant());
     }
 
-
     /**
      * Adds a new task to the be done by this developer so that the key
      * of the map is the task and the value is the instant it is going to be started
      * @param task The task to be added
-     * @return The instant the task is expected to finish
      */
-    private int addTask(Task task) {
+    private void addTask(Task task) {
         //Get instant the task can be started
         int instant = allocateTask(task);
 
         tasks.put(task,instant);
 
         this.latestTask = task; //Sets the latest accepted task
-
-        return instant + task.getDuration();
     }
 
     /**
@@ -125,7 +118,7 @@ public class DeveloperAgent extends Agent {
             int minStartingInstant = allocateTask(latestReceivedTask);
 
             // Responds with the timestamp when it could complete the task
-            Proposal proposal = new Proposal(minStartingInstant + latestReceivedTask.getDuration(), latestReceivedTask);
+            Proposal proposal = new Proposal(minStartingInstant + latestReceivedTask.getDuration(), tasks.size(), latestReceivedTask);
             try {
                 reply.setContentObject(proposal);
             } catch (IOException e) {
@@ -136,14 +129,7 @@ public class DeveloperAgent extends Agent {
         }
 
         @Override
-        protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-            System.out.println(myAgent.getLocalName() + " got a reject...");
-        }
-
-        @Override
-        protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-            System.out.println(myAgent.getLocalName() + " got an accept!");
-
+        protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
             try {
                 Proposal proposal = (Proposal) accept.getContentObject();
                 addTask(proposal.getTask());

@@ -1,5 +1,6 @@
 package io;
 
+import agents.strategies.ChooseDeveloperLeastTasksStrategy;
 import agents.strategies.ChooseDeveloperLowestTimeStrategy;
 import agents.strategies.ChooseDeveloperRandomStrategy;
 import agents.strategies.ChooseDeveloperStrategy;
@@ -76,6 +77,8 @@ public class ConfigReader {
                 return new ChooseDeveloperRandomStrategy();
             case "lowesttime":
                 return new ChooseDeveloperLowestTimeStrategy();
+            case "numberoftasks":
+                return new ChooseDeveloperLeastTasksStrategy();
             default:
                 break;
         }
