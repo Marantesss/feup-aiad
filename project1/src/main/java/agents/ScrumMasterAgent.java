@@ -2,34 +2,37 @@ package agents;
 
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.SequentialBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
 import proposals.Proposal;
 import tasks.Task;
-import tasks.TaskPriority;
-import tasks.TaskType;
 
 import java.io.IOException;
 import agents.strategies.ChooseDeveloperStrategy;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
 public class ScrumMasterAgent extends Agent {
     private ChooseDeveloperStrategy strategy;
-    private List<Task> bufferedTasks;
+    private LinkedList<Task> bufferedTasks;
     private List<String> developerNames;
+    private SequentialBehaviour behaviour;
 
     @Override
     protected void setup() {
         // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
         Object[] args = this.getArguments();
         this.strategy = (ChooseDeveloperStrategy) args[0];
-        this.bufferedTasks = (List<Task>) args[1];
+        this.bufferedTasks = (LinkedList<Task>) args[1];
         this.developerNames = generateDeveloperNames((int) args[2]);
+        behaviour = new SequentialBehaviour();
 
-        addBehaviour(new FIPAContractNetInit(this, new ACLMessage(ACLMessage.CFP)));
+        this.sendNextMessage();
+        addBehaviour(behaviour);
     }
 
     @Override
@@ -56,6 +59,10 @@ public class ScrumMasterAgent extends Agent {
         return developerNames;
     }
 
+    private void sendNextMessage() {
+        behaviour.addSubBehaviour(new FIPAContractNetInit(this, new ACLMessage(ACLMessage.CFP)));
+    }
+
     class FIPAContractNetInit extends ContractNetInitiator {
         FIPAContractNetInit(Agent a, ACLMessage cfp) {
             super(a, cfp);
@@ -69,10 +76,7 @@ public class ScrumMasterAgent extends Agent {
                 cfp.addReceiver(new AID(name, false));
             }
 
-            // Ciclo while para enviar todas as tasks no buffer
-            // Verificar se é assim ou de outra forma
-
-            Task task = new Task(5, TaskPriority.HIGH, TaskType.API);
+            Task task = bufferedTasks.pop();
             try {
                 cfp.setContentObject(task);
             } catch (IOException e) {
@@ -110,6 +114,10 @@ public class ScrumMasterAgent extends Agent {
         @Override
         protected void handleAllResultNotifications(Vector resultNotifications) {
             System.out.println("got " + resultNotifications.size() + " result notifs!");
+
+            if (!bufferedTasks.isEmpty()) {
+                sendNextMessage();
+            }
         }
     }
 }

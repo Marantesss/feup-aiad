@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class ConfigReader {
             var taskGenerator = new RandomTaskGenerator(10, 0, 30);
             this.tasks = taskGenerator.generateTaskList(20);
         } else {
-            this.tasks = new ArrayList<>();
+            this.tasks = new LinkedList<>();
             for (var jsonTask : jsonTasks) {
                 int startingInstant = (int) Math.round((double) jsonTask.get("start"));
                 int duration = (int) Math.round((double) jsonTask.get("duration"));

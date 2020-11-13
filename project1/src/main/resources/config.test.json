@@ -1,5 +1,5 @@
 {
-  "strategy": "RANDOM",
+  "strategy": "LOWESTTIME",
   "developers": [
     {
       "aoe": "TESTING"
@@ -29,31 +29,31 @@
     },
     {
       "duration": 4,
-      "start": 1,
+      "start": 0,
       "priority": "MEDIUM",
       "type": "DEVOPS"
     },
     {
       "duration": 2,
-      "start": 3,
+      "start": 0,
       "priority": "LOW",
       "type": "BACKEND"
     },
     {
       "duration": 1,
-      "start": 4,
+      "start": 0,
       "priority": "LOW",
       "type": "DATABASE"
     },
     {
       "duration": 5,
-      "start": 7,
+      "start": 0,
       "priority": "MEDIUM",
       "type": "FRONTEND"
     },
     {
       "duration": 6,
-      "start": 2,
+      "start": 0,
       "priority": "HIGH",
       "type": "API"
     }

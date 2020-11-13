@@ -5,7 +5,6 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
-import tasks.TaskType;
 
 import java.io.IOException;
 
