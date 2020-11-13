@@ -29,18 +29,6 @@ public class DeveloperAgent extends Agent {
         addBehaviour(new FIPAContractNetResp(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
     }
 
-    public Task getLatestTask() {
-        return latestTask;
-    }
-
-    public Integer getTaskStartInstant(Task task) {
-        return this.tasks.get(task);
-    }
-
-    public Integer getTaskCompletionInstant(Task task) {
-        return this.tasks.get(task) + task.getDuration();
-    }
-
     @Override
     protected void takeDown() {
         super.takeDown();
@@ -128,6 +116,9 @@ public class DeveloperAgent extends Agent {
 
             //Get the task allocation
             int minStartingInstant = allocateTask(latestReceivedTask);
+
+            // update starting instant
+            latestReceivedTask.setStartingInstant(minStartingInstant);
 
             // Responds with the timestamp when it could complete the task
             Proposal proposal = new Proposal(minStartingInstant + latestReceivedTask.getDuration(), tasks.size(), latestReceivedTask);
