@@ -23,37 +23,37 @@
   "tasks": [
     {
       "duration": 6,
-      "start": 0,
+      "startingInstant": 0,
       "priority": "HIGH",
       "type": "TESTING"
     },
     {
       "duration": 4,
-      "start": 0,
+      "startingInstant": 0,
       "priority": "MEDIUM",
       "type": "DEVOPS"
     },
     {
       "duration": 2,
-      "start": 0,
+      "startingInstant": 0,
       "priority": "LOW",
       "type": "BACKEND"
     },
     {
       "duration": 1,
-      "start": 0,
+      "startingInstant": 0,
       "priority": "LOW",
       "type": "DATABASE"
     },
     {
       "duration": 5,
-      "start": 0,
+      "startingInstant": 0,
       "priority": "MEDIUM",
       "type": "FRONTEND"
     },
     {
       "duration": 6,
-      "start": 0,
+      "startingInstant": 0,
       "priority": "HIGH",
       "type": "API"
     }

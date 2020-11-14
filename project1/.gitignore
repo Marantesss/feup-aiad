@@ -2,4 +2,4 @@
 out
 
 # generated results
-src/main/results
+json/*results.json

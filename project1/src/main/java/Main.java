@@ -17,7 +17,7 @@ public class Main {
         ConfigReader reader = null;
         try {
             System.out.println("Reading config file...");
-            reader = new ConfigReader("json/config.test.json");
+            reader = new ConfigReader("json/small.test.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
