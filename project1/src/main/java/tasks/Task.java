@@ -7,7 +7,7 @@ public class Task implements Serializable {
 
     private final int id;
     private int duration;
-    private final int startingInstant;
+    private int startingInstant;
     private final TaskPriority priority;
     private final TaskType type;
 
@@ -46,6 +46,10 @@ public class Task implements Serializable {
 
     public int getStartingInstant() {
         return startingInstant;
+    }
+
+    public void setStartingInstant(int startingInstant) {
+        this.startingInstant = startingInstant;
     }
 
     public int getId() {

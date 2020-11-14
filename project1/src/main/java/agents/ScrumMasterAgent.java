@@ -1,5 +1,6 @@
 package agents;
 
+import io.ResultsWriter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
@@ -23,6 +24,8 @@ public class ScrumMasterAgent extends Agent {
     private List<String> developerNames;
     private SequentialBehaviour behaviour;
 
+    private ResultsWriter writer;
+
     @Override
     protected void setup() {
         // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
@@ -30,6 +33,8 @@ public class ScrumMasterAgent extends Agent {
         this.strategy = (ChooseDeveloperStrategy) args[0];
         this.bufferedTasks = (LinkedList<Task>) args[1];
         this.developerNames = generateDeveloperNames((int) args[2]);
+        this.writer = new ResultsWriter("src/main/results/results.test.json");
+
         behaviour = new SequentialBehaviour();
 
         this.sendNextMessage();
@@ -69,6 +74,7 @@ public class ScrumMasterAgent extends Agent {
             super(a, cfp);
         }
 
+        // TODO: maybe do this through the "yellow pages" service agent
         @Override
         protected Vector prepareCfps(ACLMessage cfp) {
             Vector v = new Vector();
@@ -113,9 +119,10 @@ public class ScrumMasterAgent extends Agent {
                 // TODO: If this misbehaves, then it is because we don't override the equals() method for Proposal class
                 if (proposals.get(i).equals(best)) {
                     reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-                }
-                else
+                    writer.addTask(response.getSender().getLocalName(), best.getTask());
+                } else {
                     reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
+                }
 
                 try {
                     reply.setContentObject(proposals.get(i));
@@ -131,6 +138,8 @@ public class ScrumMasterAgent extends Agent {
         protected void handleAllResultNotifications(Vector resultNotifications) {
             if (!bufferedTasks.isEmpty()) {
                 sendNextMessage();
+            } else {
+                writer.writeOutput();
             }
         }
     }

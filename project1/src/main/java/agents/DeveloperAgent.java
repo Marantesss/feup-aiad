@@ -10,21 +10,21 @@ import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DeveloperAgent extends Agent {
     private int id;
     private TaskType aoe;
-    private HashMap<Task,Integer> tasks; //key -> task; Value: -> instant a task is finished
-    private Task latestTask; //The latest task this developer is working on
+    private LinkedHashMap<Task,Integer> tasks; // key -> task; Value: -> instant a task is finished
+    private Task latestTask; // The latest task this developer is working on
 
     protected void setup() {
         // devArgs = { ++devCount, aoe };
         Object[] args = this.getArguments();
         this.id = (int) args[0];
         this.aoe = (TaskType) args[1];
-        this.tasks = new HashMap<>();
+        this.tasks = new LinkedHashMap<>();
 
         addBehaviour(new FIPAContractNetResp(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
     }
@@ -116,6 +116,9 @@ public class DeveloperAgent extends Agent {
 
             //Get the task allocation
             int minStartingInstant = allocateTask(latestReceivedTask);
+
+            // update starting instant
+            latestReceivedTask.setStartingInstant(minStartingInstant);
 
             // Responds with the timestamp when it could complete the task
             Proposal proposal = new Proposal(minStartingInstant + latestReceivedTask.getDuration(), tasks.size(), latestReceivedTask);
