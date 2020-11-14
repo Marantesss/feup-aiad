@@ -1,6 +1,6 @@
 package tasks;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class RandomTaskGenerator {
@@ -45,12 +45,12 @@ public class RandomTaskGenerator {
         return new Task(startingTime,duration,priority,type);
     }
 
-    public ArrayList<Task> generateTaskList(int numTasks) {
+    public LinkedList<Task> generateTaskList(int numTasks) {
         if (numTasks <= 0) {
             throw new IllegalArgumentException("The number of tasks to generate must be greater than 0");
         }
 
-        ArrayList<Task> tasks = new ArrayList<>();
+        LinkedList<Task> tasks = new LinkedList<>();
 
         for (int i = 0; i < numTasks; i++) {
             tasks.add(generateTask());

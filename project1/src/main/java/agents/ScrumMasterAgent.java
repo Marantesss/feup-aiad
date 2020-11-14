@@ -17,12 +17,13 @@ import tasks.Task;
 
 import java.io.IOException;
 import agents.strategies.ChooseDeveloperStrategy;
+import tasks.TaskPriorityComparator;
 
 import java.util.*;
 
 public class ScrumMasterAgent extends Agent {
     private ChooseDeveloperStrategy strategy;
-    private LinkedList<Task> bufferedTasks;
+    private PriorityQueue<Task> bufferedTasks;
     private AID[] developers;
     private SequentialBehaviour behaviour;
 
@@ -30,12 +31,14 @@ public class ScrumMasterAgent extends Agent {
 
     @Override
     protected void setup() {
-        // scrumMasterArgs = { reader.getStrategy(), reader.getTasks() }
+        // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
         Object[] args = this.getArguments();
         this.strategy = (ChooseDeveloperStrategy) args[0];
-        this.bufferedTasks = (LinkedList<Task>) args[1];
-
         this.writer = new ResultsWriter("src/main/results/results.test.json");
+        this.bufferedTasks = new PriorityQueue<>(new TaskPriorityComparator());
+
+        LinkedList<Task> tasks = (LinkedList<Task>) args[1];
+        bufferedTasks.addAll(tasks);
 
         GetDevelopersBehaviour g1 = new GetDevelopersBehaviour(this, 2000);
 
@@ -78,8 +81,9 @@ public class ScrumMasterAgent extends Agent {
             for (AID aid : developers)
                 cfp.addReceiver(aid);
 
-            Task task = bufferedTasks.pop();
+            Task task = bufferedTasks.poll(); //removes the head of the queue
             System.out.println("CFP\tProposing task: " + task);
+
             try {
                 cfp.setContentObject(task);
             } catch (IOException e) {
