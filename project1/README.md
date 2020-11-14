@@ -1,6 +1,6 @@
 # SCRUM: Simulating Agile Development using Jade 
 
-> Very nice description
+Distributed Artificial Intelligence system aimed at task allocation optimization in an agile development context.
 
 ## Build and Execution
 
