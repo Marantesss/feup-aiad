@@ -12,15 +12,13 @@ import tasks.Task;
 
 import java.io.IOException;
 import agents.strategies.ChooseDeveloperStrategy;
+import tasks.TaskPriorityComparator;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class ScrumMasterAgent extends Agent {
     private ChooseDeveloperStrategy strategy;
-    private LinkedList<Task> bufferedTasks;
+    private PriorityQueue<Task> bufferedTasks;
     private List<String> developerNames;
     private SequentialBehaviour behaviour;
 
@@ -31,9 +29,12 @@ public class ScrumMasterAgent extends Agent {
         // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
         Object[] args = this.getArguments();
         this.strategy = (ChooseDeveloperStrategy) args[0];
-        this.bufferedTasks = (LinkedList<Task>) args[1];
         this.developerNames = generateDeveloperNames((int) args[2]);
         this.writer = new ResultsWriter("src/main/results/results.test.json");
+        this.bufferedTasks = new PriorityQueue<>(new TaskPriorityComparator());
+
+        LinkedList<Task> tasks = (LinkedList<Task>) args[1];
+        bufferedTasks.addAll(tasks);
 
         behaviour = new SequentialBehaviour();
 
@@ -83,7 +84,7 @@ public class ScrumMasterAgent extends Agent {
                 cfp.addReceiver(new AID(name, false));
             }
 
-            Task task = bufferedTasks.pop();
+            Task task = bufferedTasks.poll(); //removes the head of the queue
             try {
                 cfp.setContentObject(task);
             } catch (IOException e) {
