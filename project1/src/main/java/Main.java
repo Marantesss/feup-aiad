@@ -17,7 +17,7 @@ public class Main {
         ConfigReader reader = null;
         try {
             System.out.println("Reading config file...");
-            reader = new ConfigReader("src/main/resources/config.test.json");
+            reader = new ConfigReader("json/config.test.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,7 +37,7 @@ public class Main {
         // Thread.sleep(500);
 
         // create scrum master agent
-        Object[] scrumMasterArgs = { reader.getStrategy(), reader.getTasks() };
+        Object[] scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), reader.generateResultsFilePath() };
         AgentController sm = cc.createNewAgent("ScrumMaster", "agents.ScrumMasterAgent", scrumMasterArgs);
         sm.start();
 

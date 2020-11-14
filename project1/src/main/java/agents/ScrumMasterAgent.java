@@ -34,7 +34,8 @@ public class ScrumMasterAgent extends Agent {
         // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
         Object[] args = this.getArguments();
         this.strategy = (ChooseDeveloperStrategy) args[0];
-        this.writer = new ResultsWriter("src/main/results/results.test.json");
+        String outputFilePath = (String) args[2];
+        this.writer = new ResultsWriter(outputFilePath);
         this.bufferedTasks = new PriorityQueue<>(new TaskPriorityComparator());
 
         LinkedList<Task> tasks = (LinkedList<Task>) args[1];

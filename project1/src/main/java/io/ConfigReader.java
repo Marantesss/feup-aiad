@@ -100,4 +100,16 @@ public class ConfigReader {
     public ChooseDeveloperStrategy getStrategy() {
         return strategy;
     }
+
+    public String generateResultsFilePath() {
+        String fileNameNoExtension = this.configFilePath;
+
+        int lastDotIndex = this.configFilePath.lastIndexOf('.');
+
+        if (lastDotIndex != -1) {
+            fileNameNoExtension = this.configFilePath.substring(0, lastDotIndex);
+        }
+
+        return fileNameNoExtension + ".results.json";
+    }
 }
