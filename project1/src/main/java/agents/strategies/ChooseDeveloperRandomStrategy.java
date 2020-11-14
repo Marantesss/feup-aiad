@@ -2,6 +2,7 @@ package agents.strategies;
 
 import proposals.Proposal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,9 +14,11 @@ public class ChooseDeveloperRandomStrategy implements ChooseDeveloperStrategy {
 
     @Override
     public Proposal execute(List<Proposal> proposals) {
+        // hard copy proposal list
+        List<Proposal> proposalsCopy = new ArrayList<>(proposals);
         // randomize proposals array
-        Collections.shuffle(proposals);
+        Collections.shuffle(proposalsCopy);
         // return the first proposal
-        return proposals.get(0);
+        return proposalsCopy.get(0);
     }
 }

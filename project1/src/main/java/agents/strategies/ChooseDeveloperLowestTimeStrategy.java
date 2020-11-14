@@ -3,6 +3,7 @@ package agents.strategies;
 import proposals.Proposal;
 import proposals.comparators.ProposalTimeComparator;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -18,9 +19,11 @@ public class ChooseDeveloperLowestTimeStrategy implements ChooseDeveloperStrateg
 
     @Override
     public Proposal execute(List<Proposal> proposals) {
+        // hard copy proposal list
+        List<Proposal> proposalsCopy = new ArrayList<>(proposals);
         // sort the proposals
-        proposals.sort(comparator);
+        proposalsCopy.sort(comparator);
         // return the first choice
-        return proposals.get(0);
+        return proposalsCopy.get(0);
     }
 }

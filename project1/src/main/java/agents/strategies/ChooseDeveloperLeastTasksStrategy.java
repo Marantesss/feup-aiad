@@ -21,28 +21,10 @@ public class ChooseDeveloperLeastTasksStrategy implements ChooseDeveloperStrateg
     @Override
     public Proposal execute(List<Proposal> proposals) {
         // hard copy proposal list
-        var proposalsCopy = new ArrayList<>(proposals);
+        List<Proposal> proposalsCopy = new ArrayList<>(proposals);
         // sort the proposals
         proposalsCopy.sort(comparator);
         // return the first choice
         return proposalsCopy.get(0);
     }
-    /*
-    @Override
-    public Proposal execute(List<Proposal> proposals) {
-        int min = proposals.get(0).getNumberOfTasks();
-        Proposal ret = proposals.get(0);
-
-        // sort the proposals
-        proposals.sort(comparator);
-        // return the first choice
-        System.out.println(proposals);
-
-        for (Proposal p : proposals) {
-            if(p.getNumberOfTasks() < min)
-                ret = p;
-        }
-        return ret;
-    }
-     */
 }
