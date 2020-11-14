@@ -16,6 +16,7 @@ public class Main {
 
         ConfigReader reader = null;
         try {
+            System.out.println("Reading config file...");
             reader = new ConfigReader("src/main/resources/config.test.json");
         } catch (IOException e) {
             e.printStackTrace();
@@ -26,15 +27,17 @@ public class Main {
         // create developer agents
         assert reader != null;
         int developerCount = 0;
+
         for (var aoe : reader.getDevelopersExpertise()) {
             Object[] devArgs = { ++developerCount, aoe };
             AgentController dev = cc.createNewAgent("developer" + developerCount, "agents.DeveloperAgent", devArgs);
             dev.start();
         }
         // wait for devs to be ready
-        Thread.sleep(500);
+        // Thread.sleep(500);
+
         // create scrum master agent
-        Object[] scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount };
+        Object[] scrumMasterArgs = { reader.getStrategy(), reader.getTasks() };
         AgentController sm = cc.createNewAgent("ScrumMaster", "agents.ScrumMasterAgent", scrumMasterArgs);
         sm.start();
 
@@ -45,5 +48,6 @@ public class Main {
 
         tasks.forEach(System.out::println);
          */
+        cc.kill();
     }
 }

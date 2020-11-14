@@ -1,5 +1,9 @@
 package agents;
 
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.UnreadableException;
 import proposals.Proposal;
 import tasks.Task;
@@ -26,11 +30,34 @@ public class DeveloperAgent extends Agent {
         this.aoe = (TaskType) args[1];
         this.tasks = new LinkedHashMap<>();
 
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("Developer");
+        sd.setName(getLocalName());
+
+        dfd.addServices(sd);
+
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+
         addBehaviour(new FIPAContractNetResp(this, MessageTemplate.MatchPerformative(ACLMessage.CFP)));
     }
 
     @Override
     protected void takeDown() {
+        System.out.println("Developer " + id + ": " + getTaskString());
+
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+
         super.takeDown();
     }
 
@@ -144,8 +171,6 @@ public class DeveloperAgent extends Agent {
             // Verify between all the informs
             result.setPerformative(ACLMessage.INFORM);
             result.setContent("this is the result");
-
-            System.out.println("Developer " + id + ": " + getTaskString());
 
             return result;
         }

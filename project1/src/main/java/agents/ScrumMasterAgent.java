@@ -4,6 +4,11 @@ import io.ResultsWriter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
@@ -13,32 +18,33 @@ import tasks.Task;
 import java.io.IOException;
 import agents.strategies.ChooseDeveloperStrategy;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class ScrumMasterAgent extends Agent {
     private ChooseDeveloperStrategy strategy;
     private LinkedList<Task> bufferedTasks;
-    private List<String> developerNames;
+    private AID[] developers;
     private SequentialBehaviour behaviour;
 
     private ResultsWriter writer;
 
     @Override
     protected void setup() {
-        // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
+        // scrumMasterArgs = { reader.getStrategy(), reader.getTasks() }
         Object[] args = this.getArguments();
         this.strategy = (ChooseDeveloperStrategy) args[0];
         this.bufferedTasks = (LinkedList<Task>) args[1];
-        this.developerNames = generateDeveloperNames((int) args[2]);
+
         this.writer = new ResultsWriter("src/main/results/results.test.json");
 
-        behaviour = new SequentialBehaviour();
+        GetDevelopersBehaviour g1 = new GetDevelopersBehaviour(this, 2000);
+
+        this.behaviour = new SequentialBehaviour();
+        this.behaviour.addSubBehaviour(g1);
 
         this.sendNextMessage();
-        addBehaviour(behaviour);
+
+        this.addBehaviour(behaviour);
     }
 
     @Override
@@ -51,18 +57,10 @@ public class ScrumMasterAgent extends Agent {
         return "ScrumMasterAgent{" +
                 "strategy=" + strategy +
                 ", bufferedTasks=" + bufferedTasks +
-                ", developerNames=" + developerNames +
+                ", developers=" + Arrays.toString(developers) +
+                ", behaviour=" + behaviour +
+                ", writer=" + writer +
                 '}';
-    }
-
-    private List<String> generateDeveloperNames(int developerCount) {
-        List<String> developerNames = new ArrayList<>();
-
-        for (int i = 1; i <= developerCount; i++) {
-            developerNames.add("developer"+i);
-        }
-
-        return developerNames;
     }
 
     private void sendNextMessage() {
@@ -73,17 +71,15 @@ public class ScrumMasterAgent extends Agent {
         FIPAContractNetInit(Agent a, ACLMessage cfp) {
             super(a, cfp);
         }
-
-        // TODO: maybe do this through the "yellow pages" service agent
         @Override
         protected Vector prepareCfps(ACLMessage cfp) {
             Vector v = new Vector();
 
-            for (String name : developerNames) {
-                cfp.addReceiver(new AID(name, false));
-            }
+            for (AID aid : developers)
+                cfp.addReceiver(aid);
 
             Task task = bufferedTasks.pop();
+            System.out.println("CFP\tProposing task: " + task);
             try {
                 cfp.setContentObject(task);
             } catch (IOException e) {
@@ -140,6 +136,41 @@ public class ScrumMasterAgent extends Agent {
                 sendNextMessage();
             } else {
                 writer.writeOutput();
+            }
+        }
+    }
+
+    private class GetDevelopersBehaviour extends TickerBehaviour {
+        private int attempts = 0;
+
+        GetDevelopersBehaviour(Agent a, long period) {
+            super(a, period);
+        }
+
+        @Override
+        protected void onTick() {
+            System.out.println("DF\tSearching for developers...");
+
+            DFAgentDescription template = new DFAgentDescription();
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("Developer");
+            template.addServices(sd);
+
+            try {
+                DFAgentDescription[] result = DFService.search(myAgent, template);
+                developers = new AID[result.length];
+
+                for (int i = 0; i < result.length; i++)
+                    developers[i] = result[i].getName();
+
+                if (result.length <= 1 && attempts < 2)
+                    attempts++;
+                else if (result.length <= 1 && attempts == 2)
+                    behaviour.reset();
+                else
+                    this.stop();
+            } catch (FIPAException e) {
+                e.printStackTrace();
             }
         }
     }
