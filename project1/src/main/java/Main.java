@@ -40,10 +40,11 @@ public class Main {
         }
 
         // create scrum master agent
-        Object[] scrumMasterArgs = { reader.getStrategy(), reader.getTasks() };
+        Object[] scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), reader.generateResultsFilePath() };
         AgentController sm = cc.createNewAgent("ScrumMaster", "agents.ScrumMasterAgent", scrumMasterArgs);
         sm.start();
 
         cc.kill();
+        System.exit(0);
     }
 }

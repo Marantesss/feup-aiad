@@ -1,0 +1,375 @@
+{
+  "strategy": "LOWESTTIME",
+  "developers": [
+    {
+      "aoe": "TESTING"
+    },
+    {
+      "aoe": "DEVOPS"
+    },
+    {
+      "aoe": "BACKEND"
+    },
+    {
+      "aoe": "DATABASE"
+    },
+    {
+      "aoe": "FRONTEND"
+    },
+    {
+      "aoe": "API"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "duration": 9,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "DATABASE"
+    },
+    {
+      "id": 2,
+      "duration": 5,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "FRONTEND"
+    },
+    {
+      "id": 3,
+      "duration": 11,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "DEVOPS"
+    },
+    {
+      "id": 4,
+      "duration": 11,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "DEVOPS"
+    },
+    {
+      "id": 5,
+      "duration": 10,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DATABASE"
+    },
+    {
+      "id": 6,
+      "duration": 10,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "API"
+    },
+    {
+      "id": 7,
+      "duration": 11,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DATABASE"
+    },
+    {
+      "id": 8,
+      "duration": 5,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "TESTING"
+    },
+    {
+      "id": 9,
+      "duration": 17,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "API"
+    },
+    {
+      "id": 10,
+      "duration": 10,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "FRONTEND"
+    },
+    {
+      "id": 11,
+      "duration": 18,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DATABASE"
+    },
+    {
+      "id": 12,
+      "duration": 10,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "BACKEND"
+    },
+    {
+      "id": 13,
+      "duration": 9,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "API"
+    },
+    {
+      "id": 14,
+      "duration": 12,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "TESTING"
+    },
+    {
+      "id": 15,
+      "duration": 15,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "API"
+    },
+    {
+      "id": 16,
+      "duration": 16,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "BACKEND"
+    },
+    {
+      "id": 17,
+      "duration": 1,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "BACKEND"
+    },
+    {
+      "id": 18,
+      "duration": 20,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "API"
+    },
+    {
+      "id": 19,
+      "duration": 8,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "TESTING"
+    },
+    {
+      "id": 20,
+      "duration": 12,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "FRONTEND"
+    },
+    {
+      "id": 21,
+      "duration": 18,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "DEVOPS"
+    },
+    {
+      "id": 22,
+      "duration": 18,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "TESTING"
+    },
+    {
+      "id": 23,
+      "duration": 4,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "DEVOPS"
+    },
+    {
+      "id": 24,
+      "duration": 3,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "API"
+    },
+    {
+      "id": 25,
+      "duration": 3,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "FRONTEND"
+    },
+    {
+      "id": 26,
+      "duration": 13,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "DATABASE"
+    },
+    {
+      "id": 27,
+      "duration": 2,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "TESTING"
+    },
+    {
+      "id": 28,
+      "duration": 14,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "BACKEND"
+    },
+    {
+      "id": 29,
+      "duration": 6,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "API"
+    },
+    {
+      "id": 30,
+      "duration": 12,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DATABASE"
+    },
+    {
+      "id": 31,
+      "duration": 12,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "BACKEND"
+    },
+    {
+      "id": 32,
+      "duration": 14,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "FRONTEND"
+    },
+    {
+      "id": 33,
+      "duration": 3,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "DATABASE"
+    },
+    {
+      "id": 34,
+      "duration": 1,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "TESTING"
+    },
+    {
+      "id": 35,
+      "duration": 18,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DATABASE"
+    },
+    {
+      "id": 36,
+      "duration": 19,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DEVOPS"
+    },
+    {
+      "id": 37,
+      "duration": 13,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "DEVOPS"
+    },
+    {
+      "id": 38,
+      "duration": 19,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "TESTING"
+    },
+    {
+      "id": 39,
+      "duration": 7,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "API"
+    },
+    {
+      "id": 40,
+      "duration": 20,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DATABASE"
+    },
+    {
+      "id": 41,
+      "duration": 8,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DEVOPS"
+    },
+    {
+      "id": 42,
+      "duration": 18,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "DEVOPS"
+    },
+    {
+      "id": 43,
+      "duration": 9,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "BACKEND"
+    },
+    {
+      "id": 44,
+      "duration": 12,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "DATABASE"
+    },
+    {
+      "id": 45,
+      "duration": 9,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "API"
+    },
+    {
+      "id": 46,
+      "duration": 19,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "FRONTEND"
+    },
+    {
+      "id": 47,
+      "duration": 11,
+      "startingInstant": 0,
+      "priority": "MEDIUM",
+      "type": "BACKEND"
+    },
+    {
+      "id": 48,
+      "duration": 16,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "API"
+    },
+    {
+      "id": 49,
+      "duration": 10,
+      "startingInstant": 0,
+      "priority": "LOW",
+      "type": "BACKEND"
+    },
+    {
+      "id": 50,
+      "duration": 18,
+      "startingInstant": 0,
+      "priority": "HIGH",
+      "type": "DEVOPS"
+    }
+  ]
+}

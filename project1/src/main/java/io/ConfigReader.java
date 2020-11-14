@@ -57,7 +57,7 @@ public class ConfigReader {
         } else {
             this.tasks = new LinkedList<>();
             for (var jsonTask : jsonTasks) {
-                int startingInstant = (int) Math.round((double) jsonTask.get("start"));
+                int startingInstant = (int) Math.round((double) jsonTask.get("startingInstant"));
                 int duration = (int) Math.round((double) jsonTask.get("duration"));
                 this.tasks.add(new Task(
                         startingInstant,
@@ -95,5 +95,17 @@ public class ConfigReader {
 
     public ChooseDeveloperStrategy getStrategy() {
         return strategy;
+    }
+
+    public String generateResultsFilePath() {
+        String fileNameNoExtension = this.configFilePath;
+
+        int lastDotIndex = this.configFilePath.lastIndexOf('.');
+
+        if (lastDotIndex != -1) {
+            fileNameNoExtension = this.configFilePath.substring(0, lastDotIndex);
+        }
+
+        return fileNameNoExtension + ".results.json";
     }
 }
