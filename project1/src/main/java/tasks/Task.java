@@ -40,6 +40,10 @@ public class Task implements Serializable {
         return type;
     }
 
+    public TaskPriority getPriority() {
+        return priority;
+    }
+
     public int getStartingInstant() {
         return startingInstant;
     }
@@ -47,7 +51,6 @@ public class Task implements Serializable {
     public int getId() {
         return this.id;
     }
-
 
     @Override
     public String toString() {

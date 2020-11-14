@@ -110,6 +110,7 @@ public class ScrumMasterAgent extends Agent {
                 ACLMessage response = (ACLMessage) responses.get(i);
                 ACLMessage reply = response.createReply();
 
+                // TODO: If this misbehaves, then it is because we don't override the equals() method for Proposal class
                 if (proposals.get(i).equals(best)) {
                     reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
                 }
@@ -128,8 +129,6 @@ public class ScrumMasterAgent extends Agent {
 
         @Override
         protected void handleAllResultNotifications(Vector resultNotifications) {
-            System.out.println("got " + resultNotifications.size() + " result notifs!");
-
             if (!bufferedTasks.isEmpty()) {
                 sendNextMessage();
             }

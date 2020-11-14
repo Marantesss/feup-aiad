@@ -1,5 +1,5 @@
 {
-  "strategy": "LOWESTTIME",
+  "strategy": "numberoftasks",
   "developers": [
     {
       "aoe": "TESTING"
