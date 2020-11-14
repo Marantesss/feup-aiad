@@ -1,6 +1,6 @@
 package agents;
 
-import io.OutputWriter;
+import io.ResultsWriter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
@@ -24,7 +24,7 @@ public class ScrumMasterAgent extends Agent {
     private List<String> developerNames;
     private SequentialBehaviour behaviour;
 
-    private OutputWriter writer;
+    private ResultsWriter writer;
 
     @Override
     protected void setup() {
@@ -33,7 +33,7 @@ public class ScrumMasterAgent extends Agent {
         this.strategy = (ChooseDeveloperStrategy) args[0];
         this.bufferedTasks = (LinkedList<Task>) args[1];
         this.developerNames = generateDeveloperNames((int) args[2]);
-        this.writer = new OutputWriter("results.test.json");
+        this.writer = new ResultsWriter("src/main/results/results.test.json");
 
         behaviour = new SequentialBehaviour();
 
@@ -74,6 +74,7 @@ public class ScrumMasterAgent extends Agent {
             super(a, cfp);
         }
 
+        // TODO: maybe do this through the "yellow pages" service agent
         @Override
         protected Vector prepareCfps(ACLMessage cfp) {
             Vector v = new Vector();

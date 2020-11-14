@@ -48,6 +48,10 @@ public class Task implements Serializable {
         return startingInstant;
     }
 
+    public void setStartingInstant(int startingInstant) {
+        this.startingInstant = startingInstant;
+    }
+
     public int getId() {
         return this.id;
     }
@@ -61,9 +65,5 @@ public class Task implements Serializable {
                 ", priority=" + priority +
                 ", type=" + type +
                 '}';
-    }
-
-    public void setStartingInstant(int startingInstant) {
-        this.startingInstant = startingInstant;
     }
 }
