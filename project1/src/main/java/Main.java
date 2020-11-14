@@ -9,23 +9,28 @@ import jade.wrapper.StaleProxyException;
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws StaleProxyException, InterruptedException {
+    public static void main(String[] args) throws StaleProxyException {
+        if (args.length != 1) {
+            System.out.println("Need filename as argument");
+            return;
+        }
+
         Runtime rt = Runtime.instance();
         Profile profile = new ProfileImpl();
         profile.setParameter(Profile.GUI, "false");
 
-        ConfigReader reader = null;
+        ConfigReader reader;
         try {
             System.out.println("Reading config file...");
-            reader = new ConfigReader("json/config.test.json");
+            reader = new ConfigReader(args[0]);
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
         ContainerController cc = rt.createMainContainer(profile);
 
         // create developer agents
-        assert reader != null;
         int developerCount = 0;
 
         for (var aoe : reader.getDevelopersExpertise()) {
@@ -33,21 +38,12 @@ public class Main {
             AgentController dev = cc.createNewAgent("developer" + developerCount, "agents.DeveloperAgent", devArgs);
             dev.start();
         }
-        // wait for devs to be ready
-        // Thread.sleep(500);
 
         // create scrum master agent
         Object[] scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), reader.generateResultsFilePath() };
         AgentController sm = cc.createNewAgent("ScrumMaster", "agents.ScrumMasterAgent", scrumMasterArgs);
         sm.start();
 
-        //Example Test task generation
-        /*
-        RandomTaskGenerator  generator = new RandomTaskGenerator(10,0,20);
-        ArrayList<Task> tasks = generator.generateTaskList(200);
-
-        tasks.forEach(System.out::println);
-         */
         cc.kill();
     }
 }

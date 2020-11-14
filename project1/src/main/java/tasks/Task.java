@@ -31,7 +31,7 @@ public class Task implements Serializable {
         return type;
     }
 
-    public TaskPriority getPriority() {
+    TaskPriority getPriority() {
         return priority;
     }
 

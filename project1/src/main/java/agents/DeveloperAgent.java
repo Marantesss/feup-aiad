@@ -78,8 +78,7 @@ public class DeveloperAgent extends Agent {
 
         if (latestTask == null) {
             earlyInstant = 0;
-        }
-        else {
+        } else {
             //Get the earliest theoretical instant the task can be finished
             earlyInstant = tasks.get(latestTask) + latestTask.getDuration();
         }

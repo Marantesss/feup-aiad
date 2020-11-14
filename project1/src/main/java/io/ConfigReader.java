@@ -93,10 +93,6 @@ public class ConfigReader {
         return tasks;
     }
 
-    public String getConfigFilePath() {
-        return configFilePath;
-    }
-
     public ChooseDeveloperStrategy getStrategy() {
         return strategy;
     }

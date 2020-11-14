@@ -2,7 +2,6 @@ package agents.strategies;
 
 import proposals.Proposal;
 import proposals.comparators.ProposalNumberOfTasksComparator;
-import proposals.comparators.ProposalTimeComparator;
 
 import java.util.ArrayList;
 import java.util.Comparator;

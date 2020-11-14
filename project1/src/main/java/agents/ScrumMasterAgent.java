@@ -75,6 +75,7 @@ public class ScrumMasterAgent extends Agent {
         FIPAContractNetInit(Agent a, ACLMessage cfp) {
             super(a, cfp);
         }
+
         @Override
         protected Vector prepareCfps(ACLMessage cfp) {
             Vector v = new Vector();
@@ -168,9 +169,9 @@ public class ScrumMasterAgent extends Agent {
                 for (int i = 0; i < result.length; i++)
                     developers[i] = result[i].getName();
 
-                if (result.length <= 1 && attempts < 2)
+                if (result.length <= 1 && attempts < 3)
                     attempts++;
-                else if (result.length <= 1 && attempts == 2)
+                else if (result.length <= 1 && attempts == 3)
                     behaviour.reset();
                 else
                     this.stop();
