@@ -19,15 +19,6 @@ public class Task implements Serializable {
         this.type = type;
     }
 
-    // Utilizado no scrum master temp
-    public Task(int duration, TaskPriority priority, TaskType type) {
-        this.id = ++count;
-        this.duration = duration;
-        this.priority = priority;
-        this.type = type;
-        this.startingInstant = 0;
-    }
-
     public int getDuration() {
         return duration;
     }
