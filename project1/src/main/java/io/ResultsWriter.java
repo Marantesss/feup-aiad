@@ -8,10 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ResultsWriter {
 
@@ -20,21 +17,30 @@ public class ResultsWriter {
     private final Map<String, List<Task>> developerTasks;
 
     private int totalProjectTime;
+    private int maxNumberTasks;
+    private int minNumberTasks;
 
     public ResultsWriter(String outputFilePath) {
         this.outputFilePath = outputFilePath;
         this.developerTasks = new HashMap<>();
         this.totalProjectTime = 0;
+        this.maxNumberTasks = Integer.MIN_VALUE;
+        this.minNumberTasks = Integer.MAX_VALUE;
     }
 
     public void writeOutput() {
+        calcMaxAndMin();
+
         // create GSON object and output data
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        map.put("projectTime", this.totalProjectTime);
+        map.put("maxNumberTasks", this.maxNumberTasks);
+        map.put("minNumberTasks", this.minNumberTasks);
         // add developers and according tasks (automagically)
         map.put("developers", this.developerTasks);
-        // add total project time
-        map.put("projectTime", this.totalProjectTime);
+
 
         try {
             // create folder structure if not existent
@@ -59,5 +65,15 @@ public class ResultsWriter {
         // add task to developer task list
         this.developerTasks.get(developerName).add(task);
         this.totalProjectTime = Math.max(this.totalProjectTime, (task.getStartingInstant() + task.getDuration()));
+    }
+
+    private void calcMaxAndMin() {
+        for (var tasks : this.developerTasks.values()) {
+            if (tasks.size() > this.maxNumberTasks)
+                this.maxNumberTasks = tasks.size();
+
+            if (tasks.size() < this.minNumberTasks)
+                this.minNumberTasks = tasks.size();
+        }
     }
 }

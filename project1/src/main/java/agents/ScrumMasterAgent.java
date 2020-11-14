@@ -1,6 +1,11 @@
 package agents;
 
 import io.ResultsWriter;
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.Ontology;
+import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
@@ -9,9 +14,12 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.domain.JADEAgentManagement.JADEManagementOntology;
+import jade.domain.JADEAgentManagement.ShutdownPlatform;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
+import jade.wrapper.StaleProxyException;
 import proposals.Proposal;
 import tasks.Task;
 
@@ -142,6 +150,21 @@ public class ScrumMasterAgent extends Agent {
                 sendNextMessage();
             } else {
                 writer.writeOutput();
+
+                Codec codec = new SLCodec();
+                Ontology jmo = JADEManagementOntology.getInstance();
+                getContentManager().registerLanguage(codec);
+                getContentManager().registerOntology(jmo);
+                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+                msg.addReceiver(getAMS());
+                msg.setLanguage(codec.getName());
+                msg.setOntology(jmo.getName());
+                try {
+                    getContentManager().fillContent(msg, new Action(getAID(), new ShutdownPlatform()));
+                    send(msg);
+                } catch (Codec.CodecException | OntologyException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

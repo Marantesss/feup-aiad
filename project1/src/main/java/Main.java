@@ -44,7 +44,6 @@ public class Main {
         AgentController sm = cc.createNewAgent("ScrumMaster", "agents.ScrumMasterAgent", scrumMasterArgs);
         sm.start();
 
-        cc.kill();
-        System.exit(0);
+
     }
 }
