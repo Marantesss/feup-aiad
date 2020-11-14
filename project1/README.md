@@ -21,7 +21,24 @@ java -cp lib/jade.jar:lib/gson-2.8.6.jar:out Main src/main/resources/config.test
 
 These commands have been written in the `run.sh` file, so you only need to run it.
 
+### .jar file
 
+In order to build the jar we have to build the project. To do that we can use the command above.
 
+Then we have to change to the build directory (`cd out`) and build the jar using the provided `manifest.txt`:
+
+```shell script
+jar cvfm scrum.jar ../manifest.txt .
+```
+
+The `scrum.jar` file will be inside that directory.
+
+As an alternative, the `build_jar.sh` script can be used to build the jar file.
+
+The jar file can be executed using:
+
+```shell script
+java -jar scrum.jar <arguments>
+```
 
 
