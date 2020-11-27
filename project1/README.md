@@ -16,7 +16,7 @@ This will create the `out/` folder and place all the `.class` files in it, organ
 class using:
 
 ```shell script
-java -cp lib/jade.jar:lib/gson-2.8.6.jar:out Main src/main/resources/config.test.json
+java -cp lib/jade.jar:lib/gson-2.8.6.jar:out Main json/config.test.json
 ```
 
 These commands have been written in the `run.sh` file, so you only need to run it.
