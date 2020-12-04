@@ -26,6 +26,7 @@ import tasks.Task;
 import java.io.IOException;
 import agents.strategies.ChooseDeveloperStrategy;
 import tasks.TaskPriorityComparator;
+import uchicago.src.sim.network.DefaultDrawableNode;
 
 import java.util.*;
 
@@ -36,20 +37,20 @@ public class ScrumMasterAgent extends Agent {
     private SequentialBehaviour behaviour;
 
     private ResultsWriter writer;
+    private DefaultDrawableNode myNode;
+
+
+    public ScrumMasterAgent(ChooseDeveloperStrategy strategy, String outputFilePath, List<Task> tasks) {
+        this.bufferedTasks = new PriorityQueue<>(new TaskPriorityComparator());
+
+        this.strategy = strategy;
+        this.writer = new ResultsWriter(outputFilePath);
+        this.bufferedTasks.addAll(tasks);
+    }
 
     @Override
     protected void setup() {
         super.setup();
-
-        // scrumMasterArgs = { reader.getStrategy(), reader.getTasks(), developerCount }
-        Object[] args = this.getArguments();
-        this.strategy = (ChooseDeveloperStrategy) args[0];
-        String outputFilePath = (String) args[2];
-        this.writer = new ResultsWriter(outputFilePath);
-        this.bufferedTasks = new PriorityQueue<>(new TaskPriorityComparator());
-
-        LinkedList<Task> tasks = (LinkedList<Task>) args[1];
-        bufferedTasks.addAll(tasks);
 
         GetDevelopersBehaviour g1 = new GetDevelopersBehaviour(this, 2000);
 
@@ -74,6 +75,10 @@ public class ScrumMasterAgent extends Agent {
 
     private void sendNextMessage() {
         behaviour.addSubBehaviour(new FIPAContractNetInit(this, new ACLMessage(ACLMessage.CFP)));
+    }
+
+    public void setNode(DefaultDrawableNode node) {
+        this.myNode = node;
     }
 
     class FIPAContractNetInit extends ContractNetInitiator {
