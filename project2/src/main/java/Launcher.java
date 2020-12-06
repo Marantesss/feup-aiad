@@ -1,3 +1,4 @@
+import agents.RandomExpertiseGenerator;
 import io.ConfigReader;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -41,6 +42,7 @@ public class Launcher extends Repast3Launcher {
         // create developer agents
         int developerCount = 0;
 
+        //Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
         for (var aoe : reader.getDevelopersExpertise()) {
             Object[] devArgs = { ++developerCount, aoe };
             AgentController dev = mainController.createNewAgent("developer" + developerCount, "agents.DeveloperAgent", devArgs);
