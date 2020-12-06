@@ -1,5 +1,7 @@
 package agents;
 
+import Launcher.Launcher;
+import draw.Edge;
 import io.ResultsWriter;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -124,6 +126,7 @@ public class ScrumMasterAgent extends Agent {
             }
 
             Proposal best = strategy.execute(proposals);
+            ACLMessage bestProposalMessage = null;
 
             for (int i = 0; i < responses.size(); i++) {
                 ACLMessage response = (ACLMessage) responses.get(i);
@@ -132,6 +135,7 @@ public class ScrumMasterAgent extends Agent {
                 // TODO: If this misbehaves, then it is because we don't override the equals() method for Proposal class
                 if (proposals.get(i).equals(best)) {
                     reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                    bestProposalMessage = response;
                     writer.addTask(response.getSender().getLocalName(), best.getTask());
                 } else {
                     reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
@@ -144,6 +148,16 @@ public class ScrumMasterAgent extends Agent {
                 }
 
                 acceptances.add(reply);
+            }
+
+            if(myNode != null) {
+                if(aidAcceptedMessage != null)
+                    myNode.removeEdgesTo(Launcher.getNode(aidAcceptedMessage));
+
+                aidAcceptedMessage = bestProposalMessage.getSender();
+                DefaultDrawableNode to = Launcher.getNode(aidAcceptedMessage);
+                Edge edge = new Edge(myNode, to);
+                myNode.addOutEdge(edge);
             }
         }
 

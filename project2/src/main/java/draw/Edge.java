@@ -8,25 +8,11 @@ import uchicago.src.sim.network.Node;
 import java.awt.*;
 
 public class Edge extends DefaultEdge implements DrawableEdge {
-    private Color color;
-    private static final float DEFAULT_STRENGTH = 1;
-
-    public Edge() { }
+    private Color color = Color.BLACK;
+    private static final float DEFAULT_STRENGTH = 5;
 
     public Edge(Node from, Node to) {
         super (from, to, "", DEFAULT_STRENGTH);
-    }
-
-    public Edge(Node from, Node to, float strength) {
-        super(from, to, "", strength);
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public Color getColor() {
-        return color;
     }
 
     @Override

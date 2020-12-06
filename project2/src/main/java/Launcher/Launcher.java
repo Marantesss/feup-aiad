@@ -3,9 +3,9 @@ package Launcher;
 import agents.DeveloperAgent;
 import agents.ScrumMasterAgent;
 import io.ConfigReader;
+import jade.core.AID;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
-import sajas.core.AID;
 import sajas.core.Runtime;
 import sajas.sim.repast3.Repast3Launcher;
 import sajas.wrapper.ContainerController;
@@ -102,11 +102,13 @@ public class Launcher extends Repast3Launcher {
         return node;
     }
 
-    public static void getNode(AID aid) {
+    public static DefaultDrawableNode getNode(AID aid) {
         for (DeveloperAgent agent : developerAgents) {
-            System.out.println(agent.getAID());
-            System.out.println();
+            if(aid.getLocalName().equals(agent.getAID().getLocalName()))
+                return agent.getNode();
         }
+
+        return null;
     }
 
     @Override

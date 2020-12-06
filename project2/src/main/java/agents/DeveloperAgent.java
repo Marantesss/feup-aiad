@@ -1,6 +1,5 @@
 package agents;
 
-import sajas.core.AID;
 import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -27,7 +26,7 @@ public class DeveloperAgent extends Agent {
     private LinkedHashMap<Task,Integer> tasks; // key -> task; Value: -> instant a task is finished
     private Task latestTask; // The latest task this developer is working on
 
-    private DefaultDrawableNode myNode;
+    private DefaultDrawableNode node;
     private List<ContractOutcome> contractOutcomes = new ArrayList<>();
 
     private float ang;
@@ -132,7 +131,11 @@ public class DeveloperAgent extends Agent {
     }
 
     public void setNode(DefaultDrawableNode node) {
-        this.myNode = node;
+        this.node = node;
+    }
+
+    public DefaultDrawableNode getNode() {
+        return node;
     }
 
     public double getMovingAverage(int n) {
