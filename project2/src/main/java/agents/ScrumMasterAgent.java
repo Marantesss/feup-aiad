@@ -39,6 +39,7 @@ public class ScrumMasterAgent extends Agent {
     private ResultsWriter writer;
     private DefaultDrawableNode myNode;
 
+    private AID aidAcceptedMessage;
 
     public ScrumMasterAgent(ChooseDeveloperStrategy strategy, String outputFilePath, List<Task> tasks) {
         this.bufferedTasks = new PriorityQueue<>(new TaskPriorityComparator());
