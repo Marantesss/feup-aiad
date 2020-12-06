@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class Edge extends DefaultEdge implements DrawableEdge {
     private Color color = Color.BLACK;
-    private static final float DEFAULT_STRENGTH = 5;
+    private static final float DEFAULT_STRENGTH = 1;
 
     public Edge(Node from, Node to) {
         super (from, to, "", DEFAULT_STRENGTH);
@@ -17,6 +17,6 @@ public class Edge extends DefaultEdge implements DrawableEdge {
 
     @Override
     public void draw(SimGraphics simGraphics, int fromX, int toX, int fromY, int toY) {
-        simGraphics.drawDirectedLink(color, fromX, toX, fromY, toY);
+        simGraphics.drawLink(color, fromX, toX, fromY, toY);
     }
 }

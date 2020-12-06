@@ -32,9 +32,9 @@ public class Launcher extends Repast3Launcher {
     private static List<DeveloperAgent> developerAgents;
     private ScrumMasterAgent scrumMasterAgent;
 
-    private final int WIDTH = 400;
-    private final int HEIGHT = 400;
-    private final int RADIUS = 100;
+    private final int WIDTH = 800;
+    private final int HEIGHT = 800;
+    private final int RADIUS = 200;
 
     private DisplaySurface dsurf;
     private OpenSequenceGraph plot;
@@ -71,7 +71,7 @@ public class Launcher extends Repast3Launcher {
 
         for (var aoe : reader.getDevelopersExpertise()) {
             DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe, reader.getNumberOfExpertise());
-            DefaultDrawableNode node = generateNode(Color.RED, developerAgent.getX(RADIUS, WIDTH), developerAgent.getY(RADIUS, HEIGHT));
+            DefaultDrawableNode node = generateNode("DEV "+developerCount, Color.RED, developerAgent.getX(RADIUS, WIDTH), developerAgent.getY(RADIUS, HEIGHT));
 
             developerAgents.add(developerAgent);
             developerAgent.setNode(node);
@@ -82,7 +82,7 @@ public class Launcher extends Repast3Launcher {
 
         // Create scrum master agent
         scrumMasterAgent = new ScrumMasterAgent(reader.getStrategy(), reader.generateResultsFilePath(), reader.getTasks());
-        DefaultDrawableNode node = generateNode(Color.BLUE, WIDTH/2, HEIGHT/2);
+        DefaultDrawableNode node = generateNode("SM", Color.BLUE, WIDTH/2, HEIGHT/2);
 
         scrumMasterAgent.setNode(node);
         nodes.add(node);
@@ -90,13 +90,14 @@ public class Launcher extends Repast3Launcher {
         mainController.acceptNewAgent("ScrumMaster", scrumMasterAgent).start();
     }
 
-    private DefaultDrawableNode generateNode(Color color, int x , int y) {
+    private DefaultDrawableNode generateNode(String label, Color color, int x , int y) {
         OvalNetworkItem oval = new OvalNetworkItem(x, y);
         oval.allowResizing(false);
         oval.setHeight(30);
         oval.setWidth(30);
 
-        DefaultDrawableNode node = new DefaultDrawableNode("", oval);
+        DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
+        node.setLabelColor(Color.WHITE);
         node.setColor(color);
 
         return node;
@@ -133,7 +134,7 @@ public class Launcher extends Repast3Launcher {
         dsurf.addDisplayableProbeable(display, "Network Display");
         dsurf.addZoomable(display);
         addSimEventListener(dsurf);
-        dsurf.setBackground(Color.WHITE);
+        dsurf.setBackground(Color.LIGHT_GRAY);
         dsurf.display();
 
         // Graph
