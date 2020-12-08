@@ -35,6 +35,8 @@ public class Launcher extends Repast3Launcher {
     private DisplaySurface dsurf;
     private OpenSequenceGraph plot;
 
+    private static final boolean BATCH_MODE = true;
+
     @Override
     protected void launchJADE() {
         Runtime rt = Runtime.instance();
@@ -161,6 +163,6 @@ public class Launcher extends Repast3Launcher {
 
         SimInit init = new SimInit();
         init.setNumRuns(1);
-        init.loadModel(new Launcher(), null, true);
+        init.loadModel(new Launcher(), null, !BATCH_MODE);
     }
 }
