@@ -1,6 +1,10 @@
 import agents.RandomExpertiseGenerator;
 import agents.DeveloperAgent;
 import agents.ScrumMasterAgent;
+import agents.strategies.ChooseDeveloperLeastTasksStrategy;
+import agents.strategies.ChooseDeveloperLowestTimeStrategy;
+import agents.strategies.ChooseDeveloperRandomStrategy;
+import agents.strategies.ChooseDeveloperStrategy;
 import io.ConfigReader;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -8,6 +12,7 @@ import sajas.core.Runtime;
 import sajas.sim.repast3.Repast3Launcher;
 import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import tasks.RandomTaskGenerator;
 import uchicago.src.reflector.ListPropertyDescriptor;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
@@ -35,19 +40,23 @@ public class Launcher extends Repast3Launcher {
     private OpenSequenceGraph plot;
 
     // ---
-    // GUI Variables
     private static final boolean BATCH_MODE = true;
+    // GUI Variables
+    // For some reason this had to be in caps
+    // DROPDOWN does not work if camelCase... no clue
+    private String CONFIG_FILE_PATH = "";
+    private boolean CUSTOM_OPTIONS = false;
     private int NUMBER_OF_TASKS = 100;
     private int NUMBER_OF_DEVELOPERS = 6;
-    private String STRATEGY = "random";
+    private ChooseDeveloperStrategy STRATEGY = new ChooseDeveloperRandomStrategy();
 
     public Launcher() {
         // Create strategy dropdown
-        Hashtable h1 = new Hashtable();
-        h1.put("random", "Random");
-        h1.put("lowesttime", "Lowest Time");
-        h1.put("numberoftasks", "Number of Tasks");
-        ListPropertyDescriptor pd = new ListPropertyDescriptor("STRATEGY", h1);
+        Hashtable strategyDropdown = new Hashtable();
+        strategyDropdown.put(new ChooseDeveloperRandomStrategy(), "Random");
+        strategyDropdown.put(new ChooseDeveloperLowestTimeStrategy(), "Lowest Time");
+        strategyDropdown.put(new ChooseDeveloperLeastTasksStrategy(), "Number of Tasks");
+        ListPropertyDescriptor pd = new ListPropertyDescriptor("STRATEGY", strategyDropdown);
         descriptors.put("STRATEGY", pd);
     }
 
@@ -65,12 +74,25 @@ public class Launcher extends Repast3Launcher {
         }
     }
 
-    public String getSTRATEGY() {
-        return STRATEGY;
+    @Override
+    public String[] getInitParam() {
+        return new String[] {"CONFIG_FILE_PATH", "CUSTOM_OPTIONS", "NUMBER_OF_TASKS", "NUMBER_OF_DEVELOPERS", "STRATEGY"};
     }
 
-    public void setSTRATEGY(String STRATEGY) {
-        this.STRATEGY = STRATEGY;
+    public String getCONFIG_FILE_PATH() {
+        return CONFIG_FILE_PATH;
+    }
+
+    public void setCONFIG_FILE_PATH(String CONFIG_FILE_PATH) {
+        this.CONFIG_FILE_PATH = CONFIG_FILE_PATH;
+    }
+
+    public boolean getCUSTOM_OPTIONS() {
+        return CUSTOM_OPTIONS;
+    }
+
+    public void setCUSTOM_OPTIONS(boolean CUSTOM_OPTIONS) {
+        this.CUSTOM_OPTIONS = CUSTOM_OPTIONS;
     }
 
     public int getNUMBER_OF_TASKS() {
@@ -89,7 +111,15 @@ public class Launcher extends Repast3Launcher {
         this.NUMBER_OF_DEVELOPERS = NUMBER_OF_DEVELOPERS;
     }
 
-    private void launchAgents() throws StaleProxyException {
+    public ChooseDeveloperStrategy getSTRATEGY() {
+        return STRATEGY;
+    }
+
+    public void setSTRATEGY(ChooseDeveloperStrategy strategy) {
+        this.STRATEGY = strategy;
+    }
+
+    private void lunchDevelopersFromFile() throws StaleProxyException {
         ConfigReader reader;
         try {
             System.out.println("Reading config file...");
@@ -118,13 +148,41 @@ public class Launcher extends Repast3Launcher {
         }
 
         // create scrum master agent
-        scrumMasterAgent = new ScrumMasterAgent(reader.pickStrategy(STRATEGY), reader.generateResultsFilePath(), reader.getTasks());
+        scrumMasterAgent = new ScrumMasterAgent(reader.getStrategy(), reader.generateResultsFilePath(), reader.getTasks());
         DefaultDrawableNode node = generateNode("ScrumMaster", Color.WHITE, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
 
         scrumMasterAgent.setNode(node);
         nodes.add(node);
 
         mainController.acceptNewAgent("ScrumMaster", scrumMasterAgent).start();
+    }
+
+    private void lunchDevelopersFromConfig() throws StaleProxyException {
+        Random random = new Random(System.currentTimeMillis());
+        // generate random tasks
+        // TODO maxTask and minTaskTime
+        var taskList = new RandomTaskGenerator(10, 0, 0).generateTaskList(NUMBER_OF_TASKS);
+
+        // generate developer agents
+        System.out.println("generate agents here");
+
+        // create scrum master agent
+        var outputFilePath = "json/" + this.hashCode() + ".results.json";
+        scrumMasterAgent = new ScrumMasterAgent(STRATEGY, outputFilePath, taskList);
+        DefaultDrawableNode node = generateNode("ScrumMaster", Color.WHITE, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
+
+        scrumMasterAgent.setNode(node);
+        nodes.add(node);
+
+        mainController.acceptNewAgent("ScrumMaster", scrumMasterAgent).start();
+    }
+
+    private void launchAgents() throws StaleProxyException {
+       if (CUSTOM_OPTIONS) {
+           lunchDevelopersFromConfig();
+       } else {
+           lunchDevelopersFromFile();
+       }
     }
 
     private DefaultDrawableNode generateNode(String label, Color color, int x , int y) {
@@ -181,11 +239,6 @@ public class Launcher extends Repast3Launcher {
 
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
         getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);
-    }
-
-    @Override
-    public String[] getInitParam() {
-        return new String[] {"NUMBER_OF_TASKS", "NUMBER_OF_DEVELOPERS", "STRATEGY"};
     }
 
     @Override
