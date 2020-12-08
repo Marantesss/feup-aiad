@@ -1,3 +1,4 @@
+import agents.RandomExpertiseGenerator;
 import agents.DeveloperAgent;
 import agents.ScrumMasterAgent;
 import io.ConfigReader;
@@ -64,6 +65,7 @@ public class Launcher extends Repast3Launcher {
         nodes = new ArrayList<>();
         developerAgents =  new ArrayList<>();
 
+        //Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
         for (var aoe : reader.getDevelopersExpertise()) {
             DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe);
             DefaultDrawableNode node = generateNode("developer" + developerCount, Color.RED, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
