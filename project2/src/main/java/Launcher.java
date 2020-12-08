@@ -164,7 +164,22 @@ public class Launcher extends Repast3Launcher {
         var taskList = new RandomTaskGenerator(10, 0, 0).generateTaskList(NUMBER_OF_TASKS);
 
         // generate developer agents
-        System.out.println("generate agents here");
+        // create developer agents
+        int developerCount = 0;
+        nodes = new ArrayList<>();
+        developerAgents =  new ArrayList<>();
+
+        //Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
+        for (var aoe : RandomExpertiseGenerator.getRandomExpertise(NUMBER_OF_DEVELOPERS)) {
+            DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe);
+            DefaultDrawableNode node = generateNode("developer" + developerCount, Color.RED, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
+
+            developerAgents.add(developerAgent);
+            developerAgent.setNode(node);
+            nodes.add(node);
+
+            mainController.acceptNewAgent("developer" + developerCount, developerAgent).start();
+        }
 
         // create scrum master agent
         var outputFilePath = "json/" + this.hashCode() + ".results.json";
