@@ -6,9 +6,9 @@ import jade.core.Profile;
 import jade.core.ProfileImpl;
 import sajas.core.Runtime;
 import sajas.sim.repast3.Repast3Launcher;
-import sajas.wrapper.AgentController;
 import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import uchicago.src.reflector.ListPropertyDescriptor;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
 import uchicago.src.sim.engine.Schedule;
@@ -20,9 +20,8 @@ import uchicago.src.sim.network.DefaultDrawableNode;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class Launcher extends Repast3Launcher {
     private ContainerController mainController;
@@ -35,7 +34,22 @@ public class Launcher extends Repast3Launcher {
     private DisplaySurface dsurf;
     private OpenSequenceGraph plot;
 
+    // ---
+    // GUI Variables
     private static final boolean BATCH_MODE = true;
+    private int NUMBER_OF_TASKS = 100;
+    private int NUMBER_OF_DEVELOPERS = 6;
+    private String STRATEGY = "random";
+
+    public Launcher() {
+        // Create strategy dropdown
+        Hashtable h1 = new Hashtable();
+        h1.put("random", "Random");
+        h1.put("lowesttime", "Lowest Time");
+        h1.put("numberoftasks", "Number of Tasks");
+        ListPropertyDescriptor pd = new ListPropertyDescriptor("STRATEGY", h1);
+        descriptors.put("STRATEGY", pd);
+    }
 
     @Override
     protected void launchJADE() {
@@ -49,6 +63,30 @@ public class Launcher extends Repast3Launcher {
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getSTRATEGY() {
+        return STRATEGY;
+    }
+
+    public void setSTRATEGY(String STRATEGY) {
+        this.STRATEGY = STRATEGY;
+    }
+
+    public int getNUMBER_OF_TASKS() {
+        return NUMBER_OF_TASKS;
+    }
+
+    public void setNUMBER_OF_TASKS(int NUMBER_OF_TASKS) {
+        this.NUMBER_OF_TASKS = NUMBER_OF_TASKS;
+    }
+
+    public int getNUMBER_OF_DEVELOPERS() {
+        return NUMBER_OF_DEVELOPERS;
+    }
+
+    public void setNUMBER_OF_DEVELOPERS(int NUMBER_OF_DEVELOPERS) {
+        this.NUMBER_OF_DEVELOPERS = NUMBER_OF_DEVELOPERS;
     }
 
     private void launchAgents() throws StaleProxyException {
@@ -80,7 +118,7 @@ public class Launcher extends Repast3Launcher {
         }
 
         // create scrum master agent
-        scrumMasterAgent = new ScrumMasterAgent(reader.getStrategy(), reader.generateResultsFilePath(), reader.getTasks());
+        scrumMasterAgent = new ScrumMasterAgent(reader.pickStrategy(STRATEGY), reader.generateResultsFilePath(), reader.getTasks());
         DefaultDrawableNode node = generateNode("ScrumMaster", Color.WHITE, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
 
         scrumMasterAgent.setNode(node);
@@ -147,7 +185,7 @@ public class Launcher extends Repast3Launcher {
 
     @Override
     public String[] getInitParam() {
-        return new String[0];
+        return new String[] {"NUMBER_OF_TASKS", "NUMBER_OF_DEVELOPERS", "STRATEGY"};
     }
 
     @Override
