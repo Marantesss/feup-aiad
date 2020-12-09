@@ -143,7 +143,7 @@ public class Launcher extends Repast3Launcher {
         // Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
         for (var aoe : reader.getDevelopersExpertise()) {
             DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe, reader.getNumberOfExpertise());
-            DefaultDrawableNode node = generateNode("DEV "+developerCount, Color.RED, developerAgent.getX(RADIUS, WIDTH), developerAgent.getY(RADIUS, HEIGHT));
+            DefaultDrawableNode node = generateNode("Dev "+developerCount, Color.RED, developerAgent.getX(RADIUS, WIDTH), developerAgent.getY(RADIUS, HEIGHT));
 
             developerAgents.add(developerAgent);
             developerAgent.setNode(node);
@@ -177,19 +177,19 @@ public class Launcher extends Repast3Launcher {
         // Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
         for (var aoe : RandomExpertiseGenerator.getRandomExpertise(NUMBER_OF_DEVELOPERS)) {
             DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe, NUMBER_OF_DEVELOPERS);
-            DefaultDrawableNode node = generateNode("developer" + developerCount, Color.RED, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
+            DefaultDrawableNode node = generateNode("Dev "+developerCount, Color.RED, developerAgent.getX(RADIUS, WIDTH), developerAgent.getY(RADIUS, HEIGHT));
 
             developerAgents.add(developerAgent);
             developerAgent.setNode(node);
             nodes.add(node);
 
-            mainController.acceptNewAgent("developer" + developerCount, developerAgent).start();
+            mainController.acceptNewAgent("Developer" + developerCount, developerAgent).start();
         }
 
         // create scrum master agent
         var outputFilePath = "json/" + this.hashCode() + ".results.json";
         scrumMasterAgent = new ScrumMasterAgent(STRATEGY, outputFilePath, taskList);
-        DefaultDrawableNode node = generateNode("ScrumMaster", Color.WHITE, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
+        DefaultDrawableNode node = generateNode("SM", Color.BLUE, WIDTH/2, HEIGHT/2);
 
         scrumMasterAgent.setNode(node);
         nodes.add(node);
