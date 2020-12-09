@@ -1,5 +1,7 @@
 package agents;
 
+import Launcher.Launcher;
+import draw.Edge;
 import io.ResultsWriter;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -39,6 +41,7 @@ public class ScrumMasterAgent extends Agent {
     private ResultsWriter writer;
     private DefaultDrawableNode myNode;
 
+    private AID aidAcceptedMessage;
 
     public ScrumMasterAgent(ChooseDeveloperStrategy strategy, String outputFilePath, List<Task> tasks) {
         this.bufferedTasks = new PriorityQueue<>(new TaskPriorityComparator());
@@ -123,6 +126,7 @@ public class ScrumMasterAgent extends Agent {
             }
 
             Proposal best = strategy.execute(proposals);
+            ACLMessage bestProposalMessage = null;
 
             for (int i = 0; i < responses.size(); i++) {
                 ACLMessage response = (ACLMessage) responses.get(i);
@@ -131,6 +135,7 @@ public class ScrumMasterAgent extends Agent {
                 // TODO: If this misbehaves, then it is because we don't override the equals() method for Proposal class
                 if (proposals.get(i).equals(best)) {
                     reply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                    bestProposalMessage = response;
                     writer.addTask(response.getSender().getLocalName(), best.getTask());
                 } else {
                     reply.setPerformative(ACLMessage.REJECT_PROPOSAL);
@@ -144,6 +149,16 @@ public class ScrumMasterAgent extends Agent {
 
                 acceptances.add(reply);
             }
+
+            if(myNode != null) {
+                if(aidAcceptedMessage != null)
+                    myNode.removeEdgesTo(Launcher.getNode(aidAcceptedMessage));
+
+                aidAcceptedMessage = bestProposalMessage.getSender();
+                DefaultDrawableNode to = Launcher.getNode(aidAcceptedMessage);
+                Edge edge = new Edge(myNode, to);
+                myNode.addOutEdge(edge);
+            }
         }
 
         @Override
@@ -152,21 +167,6 @@ public class ScrumMasterAgent extends Agent {
                 sendNextMessage();
             } else {
                 writer.writeOutput();
-                // TODO: This causes the FALIURE message at the end
-                Codec codec = new SLCodec();
-                Ontology jmo = JADEManagementOntology.getInstance();
-                getContentManager().registerLanguage(codec);
-                getContentManager().registerOntology(jmo);
-                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-                msg.addReceiver(getAMS());
-                msg.setLanguage(codec.getName());
-                msg.setOntology(jmo.getName());
-                try {
-                    getContentManager().fillContent(msg, new Action(getAID(), new ShutdownPlatform()));
-                    send(msg);
-                } catch (Codec.CodecException | OntologyException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }

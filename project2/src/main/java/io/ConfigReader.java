@@ -108,4 +108,8 @@ public class ConfigReader {
 
         return fileNameNoExtension + ".results.json";
     }
+
+    public int getNumberOfExpertise() {
+        return developersExpertise.size();
+    }
 }

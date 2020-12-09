@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build the project
-javac -cp lib/gson-2.8.6.jar:lib/jade.jar  -d out  src/main/java/Launcher.java src/main/java/*/*.java src/main/java/*/*/*.java
+javac -cp lib/gson-2.8.6.jar:lib/jade.jar  -d out  src/main/java/Launcher.Launcher.java src/main/java/*/*.java src/main/java/*/*/*.java
 
 # Change to the out directory
 cd out || (echo "Out directory does not exist" && exit)

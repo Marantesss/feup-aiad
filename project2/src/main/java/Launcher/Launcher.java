@@ -1,3 +1,5 @@
+package Launcher;
+
 import agents.RandomExpertiseGenerator;
 import agents.DeveloperAgent;
 import agents.ScrumMasterAgent;
@@ -6,6 +8,7 @@ import agents.strategies.ChooseDeveloperLowestTimeStrategy;
 import agents.strategies.ChooseDeveloperRandomStrategy;
 import agents.strategies.ChooseDeveloperStrategy;
 import io.ConfigReader;
+import jade.core.AID;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import sajas.core.Runtime;
@@ -32,14 +35,16 @@ public class Launcher extends Repast3Launcher {
     private ContainerController mainController;
     private static List<DefaultDrawableNode> nodes;
 
-    private List<DeveloperAgent> developerAgents;
+    private static List<DeveloperAgent> developerAgents;
     private ScrumMasterAgent scrumMasterAgent;
 
-    private final int WIDTH = 200, HEIGHT = 200;
+    private final int WIDTH = 800;
+    private final int HEIGHT = 800;
+    private final int RADIUS = 200;
+
     private DisplaySurface dsurf;
     private OpenSequenceGraph plot;
 
-    // ---
     private static final boolean BATCH_MODE = true;
     // GUI Variables
     // For some reason this had to be in caps
@@ -129,27 +134,27 @@ public class Launcher extends Repast3Launcher {
             return;
         }
 
-        // create developer agents
+        // Create developer agents
         int developerCount = 0;
         Random random = new Random(System.currentTimeMillis());
         nodes = new ArrayList<>();
         developerAgents =  new ArrayList<>();
 
-        //Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
+        // Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
         for (var aoe : reader.getDevelopersExpertise()) {
-            DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe);
-            DefaultDrawableNode node = generateNode("developer" + developerCount, Color.RED, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
+            DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe, reader.getNumberOfExpertise());
+            DefaultDrawableNode node = generateNode("Dev "+developerCount, Color.RED, developerAgent.getX(RADIUS, WIDTH), developerAgent.getY(RADIUS, HEIGHT));
 
             developerAgents.add(developerAgent);
             developerAgent.setNode(node);
             nodes.add(node);
 
-            mainController.acceptNewAgent("developer" + developerCount, developerAgent).start();
+            mainController.acceptNewAgent("Developer" + developerCount, developerAgent).start();
         }
 
-        // create scrum master agent
+        // Create scrum master agent
         scrumMasterAgent = new ScrumMasterAgent(reader.getStrategy(), reader.generateResultsFilePath(), reader.getTasks());
-        DefaultDrawableNode node = generateNode("ScrumMaster", Color.WHITE, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
+        DefaultDrawableNode node = generateNode("SM", Color.BLUE, WIDTH/2, HEIGHT/2);
 
         scrumMasterAgent.setNode(node);
         nodes.add(node);
@@ -169,22 +174,22 @@ public class Launcher extends Repast3Launcher {
         nodes = new ArrayList<>();
         developerAgents =  new ArrayList<>();
 
-        //Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
+        // Use RandomExpertiseGenerator.getRandomExpertise(<numDevs>) to generate random agents
         for (var aoe : RandomExpertiseGenerator.getRandomExpertise(NUMBER_OF_DEVELOPERS)) {
-            DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe);
-            DefaultDrawableNode node = generateNode("developer" + developerCount, Color.RED, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
+            DeveloperAgent developerAgent =  new DeveloperAgent(++developerCount, aoe, NUMBER_OF_DEVELOPERS);
+            DefaultDrawableNode node = generateNode("Dev "+developerCount, Color.RED, developerAgent.getX(RADIUS, WIDTH), developerAgent.getY(RADIUS, HEIGHT));
 
             developerAgents.add(developerAgent);
             developerAgent.setNode(node);
             nodes.add(node);
 
-            mainController.acceptNewAgent("developer" + developerCount, developerAgent).start();
+            mainController.acceptNewAgent("Developer" + developerCount, developerAgent).start();
         }
 
         // create scrum master agent
         var outputFilePath = "json/" + this.hashCode() + ".results.json";
         scrumMasterAgent = new ScrumMasterAgent(STRATEGY, outputFilePath, taskList);
-        DefaultDrawableNode node = generateNode("ScrumMaster", Color.WHITE, random.nextInt(WIDTH/2),random.nextInt(HEIGHT/2));
+        DefaultDrawableNode node = generateNode("SM", Color.BLUE, WIDTH/2, HEIGHT/2);
 
         scrumMasterAgent.setNode(node);
         nodes.add(node);
@@ -209,13 +214,23 @@ public class Launcher extends Repast3Launcher {
     private DefaultDrawableNode generateNode(String label, Color color, int x , int y) {
         OvalNetworkItem oval = new OvalNetworkItem(x, y);
         oval.allowResizing(false);
-        oval.setHeight(5);
-        oval.setWidth(5);
+        oval.setHeight(30);
+        oval.setWidth(30);
 
         DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
+        node.setLabelColor(Color.WHITE);
         node.setColor(color);
 
         return node;
+    }
+
+    public static DefaultDrawableNode getNode(AID aid) {
+        for (DeveloperAgent agent : developerAgents) {
+            if(aid.getLocalName().equals(agent.getAID().getLocalName()))
+                return agent.getNode();
+        }
+
+        return null;
     }
 
     @Override
@@ -230,24 +245,26 @@ public class Launcher extends Repast3Launcher {
     }
 
     private void buildAndScheduleDisplay() {
-        // display surface
+        // Display
         if (dsurf != null) dsurf.dispose();
-        dsurf = new DisplaySurface(this, "Service Consumer/Provider Display");
-        registerDisplaySurface("Service Consumer/Provider Display", dsurf);
-        Network2DDisplay display = new Network2DDisplay(nodes,WIDTH,HEIGHT);
+
+        dsurf = new DisplaySurface(this, "Task Allocation");
+        registerDisplaySurface("Task Allocation", dsurf);
+
+        Network2DDisplay display = new Network2DDisplay(nodes, WIDTH, HEIGHT);
         dsurf.addDisplayableProbeable(display, "Network Display");
         dsurf.addZoomable(display);
         addSimEventListener(dsurf);
+        dsurf.setBackground(Color.LIGHT_GRAY);
         dsurf.display();
 
-        // graph
+        // Graph
         if (plot != null) plot.dispose();
         plot = new OpenSequenceGraph("Service performance", this);
         plot.setAxisTitles("time", "% successful service executions");
 
         plot.addSequence("Developers", new Sequence() {
             public double getSValue() {
-                // iterate through consumers
                 double v = 0.0;
                 for (DeveloperAgent developerAgent : developerAgents) {
                     v += developerAgent.getMovingAverage(10);
@@ -268,11 +285,6 @@ public class Launcher extends Repast3Launcher {
     }
 
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Need filename as argument");
-            return;
-        }
-
         SimInit init = new SimInit();
         init.setNumRuns(1);
         init.loadModel(new Launcher(), null, !BATCH_MODE);

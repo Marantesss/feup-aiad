@@ -1,6 +1,5 @@
 package agents;
 
-import com.bbn.openmap.layer.link.Link;
 import sajas.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -27,13 +26,16 @@ public class DeveloperAgent extends Agent {
     private LinkedHashMap<Task,Integer> tasks; // key -> task; Value: -> instant a task is finished
     private Task latestTask; // The latest task this developer is working on
 
-    private DefaultDrawableNode myNode;
+    private DefaultDrawableNode node;
     private List<ContractOutcome> contractOutcomes = new ArrayList<>();
 
-    public DeveloperAgent(int id, TaskType aoe) {
+    private float ang;
+
+    public DeveloperAgent(int id, TaskType aoe, int numDevelopers) {
         this.id = id;
         this.aoe = aoe;
         this.tasks = new LinkedHashMap<>();
+        this.ang = 360/numDevelopers;
     }
 
     @Override
@@ -129,7 +131,11 @@ public class DeveloperAgent extends Agent {
     }
 
     public void setNode(DefaultDrawableNode node) {
-        this.myNode = node;
+        this.node = node;
+    }
+
+    public DefaultDrawableNode getNode() {
+        return node;
     }
 
     public double getMovingAverage(int n) {
@@ -139,6 +145,14 @@ public class DeveloperAgent extends Agent {
         }
 
         return ((double) count) / n;
+    }
+
+    public int getX(int radius, int width) {
+        return (int)Math.ceil(radius * Math.cos(Math.toRadians(this.ang * (this.id-1))) + (width/2));
+    }
+
+    public int getY(int radius, int height) {
+        return (int)Math.ceil(radius * Math.sin(Math.toRadians(this.ang * (this.id-1))) + (height/2));
     }
 
     class FIPAContractNetResp extends ContractNetResponder {
@@ -197,5 +211,4 @@ public class DeveloperAgent extends Agent {
             return result;
         }
     }
-
 }
