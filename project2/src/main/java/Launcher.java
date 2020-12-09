@@ -123,7 +123,7 @@ public class Launcher extends Repast3Launcher {
         ConfigReader reader;
         try {
             System.out.println("Reading config file...");
-            reader = new ConfigReader("json/small.test.json");
+            reader = new ConfigReader(CONFIG_FILE_PATH);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -198,6 +198,12 @@ public class Launcher extends Repast3Launcher {
        } else {
            lunchDevelopersFromFile();
        }
+
+        System.out.println(getCONFIG_FILE_PATH());
+        System.out.println(getCUSTOM_OPTIONS());
+        System.out.println(getNUMBER_OF_DEVELOPERS());
+        System.out.println(getNUMBER_OF_TASKS());
+        System.out.println(getSTRATEGY().getClass().getName());
     }
 
     private DefaultDrawableNode generateNode(String label, Color color, int x , int y) {
