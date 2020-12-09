@@ -71,7 +71,7 @@ public class ConfigReader {
         reader.close();
     }
 
-    private ChooseDeveloperStrategy pickStrategy(String strategyName) {
+    public ChooseDeveloperStrategy pickStrategy(String strategyName) {
         switch (strategyName.toLowerCase()) {
             case "random":
                 return new ChooseDeveloperRandomStrategy();

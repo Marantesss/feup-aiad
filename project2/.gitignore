@@ -1,5 +1,6 @@
 .idea
 out
+project2.iml
 
 # generated results
 json/*results.json
