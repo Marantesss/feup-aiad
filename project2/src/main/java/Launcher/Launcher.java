@@ -51,7 +51,7 @@ public class Launcher extends Repast3Launcher {
     // GUI Variables
     // For some reason this had to be in caps
     // DROPDOWN does not work if camelCase... no clue
-    private String CONFIG_FILE_PATH = "";
+    private String CONFIG_FILE_PATH = "json/small.test.json";
     private boolean CUSTOM_OPTIONS = false;
     private int NUMBER_OF_TASKS = 100;
     private int NUMBER_OF_DEVELOPERS = 6;
