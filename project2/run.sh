@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Build the project
-javac -cp lib/gson-2.8.6.jar:lib/jade.jar  -d out  src/main/java/Launcher.Launcher.java src/main/java/*/*.java src/main/java/*/*/*.java
+#Build the jar
+sh ./build_jar.sh
 
-#Run main method
-java -cp lib/jade.jar:lib/gson-2.8.6.jar:out Launcher.Launcher json/config.test.json
+#run the jar
+java -jar scrum.jar
