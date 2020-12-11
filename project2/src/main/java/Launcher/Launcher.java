@@ -260,7 +260,7 @@ public class Launcher extends Repast3Launcher {
 
         // Graph
         if (plotTasks != null) plotTasks.dispose();
-        plotTasks = new OpenSequenceGraph("SCRUM Task Allocation", this);
+        plotTasks = new OpenSequenceGraph("SCRUM Task Allocation - Tasks", this);
         plotTasks.setAxisTitles("Time", "Tasks");
 
         // Average task per developer
@@ -298,7 +298,7 @@ public class Launcher extends Repast3Launcher {
         plotTasks.display();
 
         if (plotProject != null) plotProject.dispose();
-        plotProject = new OpenSequenceGraph("SCRUM Task Allocation", this);
+        plotProject = new OpenSequenceGraph("SCRUM Task Allocation - Project Time", this);
         plotProject.setAxisTitles("Time", "Time");
 
         // Time wasted in project
