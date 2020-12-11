@@ -297,8 +297,8 @@ public class Launcher extends Repast3Launcher {
         plotTasks.display();
 
         if (plotProject != null) plotProject.dispose();
-        plotProject = new OpenSequenceGraph("SCRUM Task Allocation", this);
-        plotProject.setAxisTitles("Time", "Time");
+        plotProject = new OpenSequenceGraph("Project Time", this);
+        plotProject.setAxisTitles("Time", "Tasks");
 
         // Time wasted in project
         plotProject.addSequence("Time to project completion", new Sequence() {
