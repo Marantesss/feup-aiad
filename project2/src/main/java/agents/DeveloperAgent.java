@@ -112,6 +112,15 @@ public class DeveloperAgent extends Agent {
         this.latestTask = task; //Sets the latest accepted task
     }
 
+    public int getTotalTaskTime() {
+        int totalTaskTime = 0;
+        for(Task task : this.tasks.keySet()) {
+            totalTaskTime += task.getDuration();
+        }
+
+        return totalTaskTime;
+    }
+
     /**
      * Returns a string with all the relevant task information
      * @return
@@ -145,6 +154,10 @@ public class DeveloperAgent extends Agent {
         }
 
         return ((double) count) / n;
+    }
+
+    public LinkedHashMap<Task, Integer> getTasks() {
+        return tasks;
     }
 
     public int getX(int radius, int width) {

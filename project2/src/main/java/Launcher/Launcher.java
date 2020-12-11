@@ -43,7 +43,8 @@ public class Launcher extends Repast3Launcher {
     private final int RADIUS = 200;
 
     private DisplaySurface dsurf;
-    private OpenSequenceGraph plot;
+    private OpenSequenceGraph plotTasks;
+    private OpenSequenceGraph plotProject;
 
     private static final boolean BATCH_MODE = true;
     // GUI Variables
@@ -207,12 +208,6 @@ public class Launcher extends Repast3Launcher {
        } else {
            lunchDevelopersFromFile();
        }
-
-        System.out.println(getCONFIG_FILE_PATH());
-        System.out.println(getCUSTOM_OPTIONS());
-        System.out.println(getNUMBER_OF_DEVELOPERS());
-        System.out.println(getNUMBER_OF_TASKS());
-        System.out.println(getSTRATEGY().getClass().getName());
     }
 
     private DefaultDrawableNode generateNode(String label, Color color, int x , int y) {
@@ -263,24 +258,63 @@ public class Launcher extends Repast3Launcher {
         dsurf.display();
 
         // Graph
-        if (plot != null) plot.dispose();
-        plot = new OpenSequenceGraph("Service performance", this);
-        plot.setAxisTitles("time", "% successful service executions");
+        if (plotTasks != null) plotTasks.dispose();
+        plotTasks = new OpenSequenceGraph("SCRUM Task Allocation", this);
+        plotTasks.setAxisTitles("Time", "Tasks");
 
-        plot.addSequence("Developers", new Sequence() {
+        // Average task per developer
+        plotTasks.addSequence("AVG no. of Tasks per developer", new Sequence() {
             public double getSValue() {
                 double v = 0.0;
                 for (DeveloperAgent developerAgent : developerAgents) {
-                    v += developerAgent.getMovingAverage(10);
+                    v += developerAgent.getTasks().size();
                 }
                 return v / developerAgents.size();
             }
         });
 
-        plot.display();
+        // Max task per developer
+        plotTasks.addSequence("MAX no. of Tasks per developer", new Sequence() {
+            public double getSValue() {
+                double v = 0.0;
+                for (DeveloperAgent developerAgent : developerAgents) {
+                    v = Math.max(v, developerAgent.getTasks().size());
+                }
+                return v;
+            }
+        });
+
+        // Min task per developer
+        plotTasks.addSequence("MIN no. of Tasks per developer", new Sequence() {
+            public double getSValue() {
+                double v = Double.MAX_VALUE;
+                for (DeveloperAgent developerAgent : developerAgents) {
+                    v = Math.min(v, developerAgent.getTasks().size());
+                }
+                return v;
+            }
+        });
+        plotTasks.display();
+
+        if (plotProject != null) plotProject.dispose();
+        plotProject = new OpenSequenceGraph("SCRUM Task Allocation", this);
+        plotProject.setAxisTitles("Time", "Time");
+
+        // Time wasted in project
+        plotProject.addSequence("Time to project completion", new Sequence() {
+            public double getSValue() {
+                double v = 0.0;
+                for (DeveloperAgent developerAgent : developerAgents) {
+                    v = Math.max(v, developerAgent.getTotalTaskTime());
+                }
+                return v / developerAgents.size();
+            }
+        });
+        plotProject.display();
 
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
-        getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(100, plotTasks, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(100, plotProject, "step", Schedule.LAST);
     }
 
     @Override
@@ -289,7 +323,7 @@ public class Launcher extends Repast3Launcher {
     }
 
     public static void main(String[] args) {
-        boolean runBatchMode = BATCH_MODE;
+        boolean runBatchMode = !BATCH_MODE;
         SimInit init = new SimInit();
         init.setNumRuns(1);
         init.loadModel(new Launcher(runBatchMode), null, runBatchMode);
