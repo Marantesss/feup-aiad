@@ -16,6 +16,7 @@ import sajas.sim.repast3.Repast3Launcher;
 import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import tasks.RandomTaskGenerator;
+import tasks.Task;
 import uchicago.src.reflector.ListPropertyDescriptor;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
@@ -305,9 +306,12 @@ public class Launcher extends Repast3Launcher {
             public double getSValue() {
                 double v = 0.0;
                 for (DeveloperAgent developerAgent : developerAgents) {
-                    v = Math.max(v, developerAgent.getTotalTaskTime());
+                    Task latestTask = developerAgent.getLatestTask();
+                    if (latestTask != null) {
+                        v = Math.max(v, latestTask.getStartingInstant() + latestTask.getDuration());
+                    }
                 }
-                return v / developerAgents.size();
+                return v;
             }
         });
         plotProject.display();

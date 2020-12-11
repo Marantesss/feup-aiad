@@ -112,13 +112,8 @@ public class DeveloperAgent extends Agent {
         this.latestTask = task; //Sets the latest accepted task
     }
 
-    public int getTotalTaskTime() {
-        int totalTaskTime = 0;
-        for(Task task : this.tasks.keySet()) {
-            totalTaskTime += task.getDuration();
-        }
-
-        return totalTaskTime;
+    public Task getLatestTask() {
+        return latestTask;
     }
 
     /**
