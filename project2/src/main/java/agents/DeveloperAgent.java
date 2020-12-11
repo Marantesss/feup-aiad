@@ -15,9 +15,7 @@ import sajas.proto.ContractNetResponder;
 import uchicago.src.sim.network.DefaultDrawableNode;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DeveloperAgent extends Agent {
@@ -27,7 +25,6 @@ public class DeveloperAgent extends Agent {
     private Task latestTask; // The latest task this developer is working on
 
     private DefaultDrawableNode node;
-    private List<ContractOutcome> contractOutcomes = new ArrayList<>();
 
     private float ang;
 
@@ -140,15 +137,6 @@ public class DeveloperAgent extends Agent {
 
     public DefaultDrawableNode getNode() {
         return node;
-    }
-
-    public double getMovingAverage(int n) {
-        int count = 0;
-        for(int i=Math.max(0, contractOutcomes.size()-n); i<contractOutcomes.size(); i++) {
-            count += contractOutcomes.get(i).getValue() == ContractOutcome.Value.SUCCESS ? 1 : 0;
-        }
-
-        return ((double) count) / n;
     }
 
     public LinkedHashMap<Task, Integer> getTasks() {
