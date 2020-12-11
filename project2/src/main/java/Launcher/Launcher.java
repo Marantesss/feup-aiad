@@ -55,14 +55,18 @@ public class Launcher extends Repast3Launcher {
     private int NUMBER_OF_DEVELOPERS = 6;
     private ChooseDeveloperStrategy STRATEGY = new ChooseDeveloperRandomStrategy();
 
-    public Launcher() {
-        // Create strategy dropdown
-        Hashtable strategyDropdown = new Hashtable();
-        strategyDropdown.put(new ChooseDeveloperRandomStrategy(), "Random");
-        strategyDropdown.put(new ChooseDeveloperLowestTimeStrategy(), "Lowest Time");
-        strategyDropdown.put(new ChooseDeveloperLeastTasksStrategy(), "Number of Tasks");
-        ListPropertyDescriptor pd = new ListPropertyDescriptor("STRATEGY", strategyDropdown);
-        descriptors.put("STRATEGY", pd);
+    public Launcher(boolean runBatchMode) {
+        if (runBatchMode) {
+            this.CONFIG_FILE_PATH = "json/small.test.json";
+        } else {
+            // Create strategy dropdown
+            Hashtable strategyDropdown = new Hashtable();
+            strategyDropdown.put(new ChooseDeveloperRandomStrategy(), "Random");
+            strategyDropdown.put(new ChooseDeveloperLowestTimeStrategy(), "Lowest Time");
+            strategyDropdown.put(new ChooseDeveloperLeastTasksStrategy(), "Number of Tasks");
+            ListPropertyDescriptor pd = new ListPropertyDescriptor("STRATEGY", strategyDropdown);
+            descriptors.put("STRATEGY", pd);
+        }
     }
 
     @Override
@@ -285,8 +289,9 @@ public class Launcher extends Repast3Launcher {
     }
 
     public static void main(String[] args) {
+        boolean runBatchMode = BATCH_MODE;
         SimInit init = new SimInit();
         init.setNumRuns(1);
-        init.loadModel(new Launcher(), null, !BATCH_MODE);
+        init.loadModel(new Launcher(runBatchMode), null, runBatchMode);
     }
 }

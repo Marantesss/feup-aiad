@@ -9,6 +9,7 @@ import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
+import jade.wrapper.ControllerException;
 import sajas.core.Agent;
 import sajas.core.behaviours.SequentialBehaviour;
 import sajas.core.behaviours.TickerBehaviour;
@@ -166,6 +167,11 @@ public class ScrumMasterAgent extends Agent {
             if (!bufferedTasks.isEmpty()) {
                 sendNextMessage();
             } else {
+                try {
+                    myAgent.getContainerController().getPlatformController().kill();
+                } catch (ControllerException e) {
+                    e.printStackTrace();
+                }
                 writer.writeOutput();
             }
         }
