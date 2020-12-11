@@ -167,12 +167,12 @@ public class ScrumMasterAgent extends Agent {
             if (!bufferedTasks.isEmpty()) {
                 sendNextMessage();
             } else {
+                writer.writeOutput();
                 try {
                     myAgent.getContainerController().getPlatformController().kill();
                 } catch (ControllerException e) {
                     e.printStackTrace();
                 }
-                writer.writeOutput();
             }
         }
     }
